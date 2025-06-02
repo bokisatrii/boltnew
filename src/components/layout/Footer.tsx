@@ -79,9 +79,16 @@ const Footer: React.FC = () => {
               <a href="#" className="bg-blue-800 hover:bg-blue-700 transition-colors p-2 rounded-full">
                 <FacebookLogo size={20} />
               </a>
-              <a href="#" className="bg-pink-700 hover:bg-pink-600 transition-colors p-2 rounded-full">
-                <InstagramLogo size={20} />
-              </a>
+            
+                <a
+  href="https://instagram.com/tvojprofil"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="bg-pink-700 hover:bg-pink-600 transition-colors p-2 rounded-full"
+>
+                  
+  <InstagramLogo size={20} />
+</a>
               <a href="https://www.instagram.com/" className="bg-blue-500 hover:bg-blue-400 transition-colors p-2 rounded-full">
                 <TwitterLogo size={20} />
               </a>
