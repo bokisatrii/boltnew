@@ -14,10 +14,13 @@ let cache: CacheEntry | null = null;
 export const fetchYahooFantasyData = async (): Promise<ProcessedTeam[]> => {
   // Check cache first
   if (cache && Date.now() - cache.timestamp < CACHE_DURATION) {
+    console.log('Returning cached data:', cache.data);
     return cache.data;
   }
 
   try {
+    console.log('Fetching data from API:', API_URL);
+    
     const response = await fetch(API_URL, {
       method: 'GET',
       headers: {
@@ -26,12 +29,22 @@ export const fetchYahooFantasyData = async (): Promise<ProcessedTeam[]> => {
       },
     });
 
+    console.log('API Response status:', response.status);
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data: YahooFantasyTeam[] = await response.json();
+    console.log('Raw API data:', data);
+    
+    if (!Array.isArray(data) || data.length === 0) {
+      console.warn('API returned empty or invalid data, using fallback');
+      return getStaticTeamsData();
+    }
+
     const processedData = transformYahooData(data);
+    console.log('Processed data:', processedData);
     
     // Update cache
     cache = {
@@ -42,26 +55,31 @@ export const fetchYahooFantasyData = async (): Promise<ProcessedTeam[]> => {
     return processedData;
   } catch (error) {
     console.error('Error fetching Yahoo Fantasy data:', error);
-    throw error;
+    console.log('Using fallback static data');
+    return getStaticTeamsData();
   }
 };
 
 const transformYahooData = (yahooData: YahooFantasyTeam[]): ProcessedTeam[] => {
+  console.log('Transforming Yahoo data:', yahooData);
+  
   return yahooData.map((team, index) => {
+    console.log(`Processing team ${index + 1}:`, team);
+    
     // Parse W-L-T format with null check
-    const wltParts = (team.wlt || '').split('-');
+    const wltParts = (team.wlt || '0-0-0').split('-');
     const wins = parseInt(wltParts[0] || '0', 10);
     const losses = parseInt(wltParts[1] || '0', 10);
     const ties = parseInt(wltParts[2] || '0', 10);
 
     // Extract rank number and playoff status with null check
-    const rankStr = (team.rank || '').replace('*', '');
-    const rank = parseInt(rankStr, 10) || 0;
+    const rankStr = (team.rank || '0').replace('*', '');
+    const rank = parseInt(rankStr, 10) || (index + 1);
     const clinched_playoff = (team.rank || '').includes('*');
 
-    return {
+    const processedTeam = {
       id: index + 1,
-      name: team.team || 'Unknown Team',
+      name: team.team || `Team ${index + 1}`,
       logo: team.logo || 'https://s.yimg.com/cv/apiv2/default/nba/nba_4_p.png',
       wins,
       losses,
@@ -73,11 +91,16 @@ const transformYahooData = (yahooData: YahooFantasyTeam[]): ProcessedTeam[] => {
       waiver: team.waiver || '0',
       lastweek: team.lastweek || '-',
     };
+    
+    console.log(`Processed team ${index + 1}:`, processedTeam);
+    return processedTeam;
   });
 };
 
 // Fallback function to get static data if API fails
 export const getStaticTeamsData = (): ProcessedTeam[] => {
+  console.log('Using static fallback data');
+  
   return [
     {
       id: 1,
@@ -120,6 +143,34 @@ export const getStaticTeamsData = (): ProcessedTeam[] => {
       clinched_playoff: false,
       waiver: '12',
       lastweek: '-1',
+    },
+    {
+      id: 4,
+      name: 'Midnight Stars',
+      logo: 'https://s.yimg.com/cv/apiv2/default/nba/nba_4_p.png',
+      wins: 5,
+      losses: 5,
+      ties: 0,
+      pct: '.500',
+      gb: '3.0',
+      rank: 4,
+      clinched_playoff: false,
+      waiver: '10',
+      lastweek: '-',
+    },
+    {
+      id: 5,
+      name: 'Urban Hawks',
+      logo: 'https://s.yimg.com/cv/apiv2/default/nba/nba_4_p.png',
+      wins: 4,
+      losses: 6,
+      ties: 0,
+      pct: '.400',
+      gb: '4.0',
+      rank: 5,
+      clinched_playoff: false,
+      waiver: '8',
+      lastweek: '+2',
     },
   ];
 };

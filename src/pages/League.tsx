@@ -18,12 +18,23 @@ const League: React.FC = () => {
   }, []);
 
   const loadTeamsData = async () => {
+    console.log('Starting to load teams data...');
     setLoading(true);
     setError(null);
     
     try {
       const data = await fetchYahooFantasyData();
-      setTeams(data);
+      console.log('Received teams data:', data);
+      
+      if (data && data.length > 0) {
+        setTeams(data);
+        console.log('Teams state updated with:', data);
+      } else {
+        console.warn('No data received, using static fallback');
+        const staticData = getStaticTeamsData();
+        setTeams(staticData);
+        setError('Koriste se rezervni podaci');
+      }
     } catch (err) {
       console.error('Failed to fetch Yahoo Fantasy data:', err);
       setError(err instanceof Error ? err.message : 'Nepoznata greška');
@@ -31,13 +42,17 @@ const League: React.FC = () => {
       // Fallback to static data
       const staticData = getStaticTeamsData();
       setTeams(staticData);
+      console.log('Using static fallback data due to error');
     } finally {
       setLoading(false);
+      console.log('Loading completed');
     }
   };
 
   const upcomingMatches = getUpcomingMatches();
   const featuredMatch = getFeaturedMatch();
+
+  console.log('Current component state:', { teams, loading, error });
 
   return (
     <div className="pt-24 pb-16">
@@ -59,6 +74,11 @@ const League: React.FC = () => {
                 <p className="text-gray-600">
                   Trenutno stanje na tabeli - podaci se ažuriraju automatski
                 </p>
+                {error && (
+                  <p className="text-orange-600 text-sm mt-1">
+                    Napomena: {error}
+                  </p>
+                )}
               </div>
               <button
                 onClick={loadTeamsData}
