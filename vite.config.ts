@@ -16,24 +16,6 @@ export default defineConfig({
         }
       }
     },
-    // Dodatne optimizacije
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true, // Uklanja console.log u produkciji
-        drop_debugger: true
-      }
-    },
-    reportCompressedSize: false, // Brži build
-    chunkSizeWarningLimit: 1000 // Povećava limit za upozorenja
-  },
-  // Optimizacija za preview/production
-  preview: {
-    port: 4173,
-    strictPort: true
-  },
-  server: {
-    port: 5173,
-    strictPort: true
+    chunkSizeWarningLimit: 1000
   }
 });
