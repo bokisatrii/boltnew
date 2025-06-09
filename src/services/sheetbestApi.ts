@@ -14,12 +14,12 @@ let cache: CacheEntry | null = null;
 export const fetchYahooFantasyData = async (): Promise<ProcessedTeam[]> => {
   // Check cache first
   if (cache && Date.now() - cache.timestamp < CACHE_DURATION) {
-    console.log('Returning cached data:', cache.data);
+    console.log('Vraćam keširane podatke');
     return cache.data;
   }
 
   try {
-    console.log('Fetching data from API:', API_URL);
+    console.log('Učitavam podatke sa API-ja...');
     
     const response = await fetch(API_URL, {
       method: 'GET',
@@ -29,22 +29,19 @@ export const fetchYahooFantasyData = async (): Promise<ProcessedTeam[]> => {
       },
     });
 
-    console.log('API Response status:', response.status);
-
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data: YahooFantasyTeam[] = await response.json();
-    console.log('Raw API data:', data);
     
     if (!Array.isArray(data) || data.length === 0) {
-      console.warn('API returned empty or invalid data, using fallback');
+      console.warn('API je vratio prazne podatke, koristim rezervne');
       return getStaticTeamsData();
     }
 
     const processedData = transformYahooData(data);
-    console.log('Processed data:', processedData);
+    console.log(`Uspešno učitano ${processedData.length} timova`);
     
     // Update cache
     cache = {
@@ -54,46 +51,37 @@ export const fetchYahooFantasyData = async (): Promise<ProcessedTeam[]> => {
 
     return processedData;
   } catch (error) {
-    console.error('Error fetching Yahoo Fantasy data:', error);
-    console.log('Using fallback static data');
+    console.error('Greška pri učitavanju Yahoo Fantasy podataka:', error);
+    console.log('Koristim rezervne podatke');
     return getStaticTeamsData();
   }
 };
 
 const transformYahooData = (yahooData: YahooFantasyTeam[]): ProcessedTeam[] => {
-  console.log('Transforming Yahoo data:', yahooData);
-  
   // Prvo filtriraj samo validne timove
-  const validTeams = yahooData.filter((team, index) => {
-    console.log(`Checking team ${index + 1}:`, team);
-    
+  const validTeams = yahooData.filter((team) => {
     // Proveri da li tim ima ime i da nije null
     if (!team || !team.team || team.team.trim() === '') {
-      console.log(`Team ${index + 1} is invalid - no name`);
       return false;
     }
     
     // Proveri da li tim ima W-L-T podatke
     if (!team.wlt || team.wlt === '0-0-0') {
-      console.log(`Team ${index + 1} (${team.team}) has no games played`);
       return false;
     }
     
     // Proveri da li je ime tima generičko
     if (team.team.startsWith('Team ') && /Team \d+/.test(team.team)) {
-      console.log(`Team ${index + 1} has generic name: ${team.team}`);
       return false;
     }
     
     return true;
   });
   
-  console.log(`Found ${validTeams.length} valid teams out of ${yahooData.length} total`);
+  console.log(`Pronađeno ${validTeams.length} validnih timova od ukupno ${yahooData.length}`);
   
   // Transformiši samo validne timove
   const processedTeams = validTeams.map((team, index) => {
-    console.log(`Processing valid team ${index + 1}:`, team);
-    
     // Parse W-L-T format
     const wltParts = team.wlt.split('-');
     const wins = parseInt(wltParts[0] || '0', 10);
@@ -105,7 +93,7 @@ const transformYahooData = (yahooData: YahooFantasyTeam[]): ProcessedTeam[] => {
     const rank = parseInt(rankStr, 10) || (index + 1);
     const clinched_playoff = (team.rank || '').toString().includes('*');
 
-    const processedTeam = {
+    return {
       id: index + 1,
       name: team.team,
       logo: team.logo || 'https://s.yimg.com/cv/apiv2/default/nba/nba_4_p.png',
@@ -119,9 +107,6 @@ const transformYahooData = (yahooData: YahooFantasyTeam[]): ProcessedTeam[] => {
       waiver: team.waiver || '0',
       lastweek: team.lastweek || '-',
     };
-    
-    console.log(`Processed team ${index + 1}:`, processedTeam);
-    return processedTeam;
   });
   
   // Sortiraj po ranku
@@ -137,7 +122,7 @@ const transformYahooData = (yahooData: YahooFantasyTeam[]): ProcessedTeam[] => {
 
 // Fallback function to get static data if API fails
 export const getStaticTeamsData = (): ProcessedTeam[] => {
-  console.log('Using static fallback data');
+  console.log('Koristim statičke rezervne podatke');
   
   return [
     {
