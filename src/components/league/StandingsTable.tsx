@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronUp, ChevronDown, HelpCircle } from 'lucide-react';
 import AnimatedSection from '../ui/AnimatedSection';
 import { ProcessedTeam } from '../../types';
@@ -13,12 +13,20 @@ type SortKey = 'name' | 'wins' | 'losses' | 'ties' | 'pct' | 'gb' | 'rank';
 type SortDirection = 'asc' | 'desc';
 
 const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, loading, error }) => {
-  const [teams, setTeams] = useState<ProcessedTeam[]>([...initialTeams]);
+  const [teams, setTeams] = useState<ProcessedTeam[]>([]);
   const [sortConfig, setSortConfig] = useState<{
     key: SortKey;
     direction: SortDirection;
   }>({ key: 'rank', direction: 'asc' });
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
+
+  // Ažuriraj lokalni state kada se promene props
+  useEffect(() => {
+    console.log('StandingsTable received teams:', initialTeams);
+    if (initialTeams && initialTeams.length > 0) {
+      setTeams([...initialTeams]);
+    }
+  }, [initialTeams]);
 
   const sortTeams = (key: SortKey) => {
     let direction: SortDirection = 'asc';
@@ -99,6 +107,17 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
         <div className="bg-red-50 border border-red-200 p-8 text-center rounded-lg">
           <p className="text-red-600 mb-4">Greška pri učitavanju podataka: {error}</p>
           <p className="text-sm text-red-500">Prikazuju se rezervni podaci.</p>
+        </div>
+      </AnimatedSection>
+    );
+  }
+
+  // Proveri da li ima timova za prikaz
+  if (!teams || teams.length === 0) {
+    return (
+      <AnimatedSection className="overflow-hidden rounded-lg shadow">
+        <div className="bg-yellow-50 border border-yellow-200 p-8 text-center rounded-lg">
+          <p className="text-yellow-600">Nema podataka za prikaz.</p>
         </div>
       </AnimatedSection>
     );
@@ -192,7 +211,7 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
                 </td>
                 <td className="px-3 py-4">
                   <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
                       <img 
                         src={team.logo} 
                         alt={team.name} 
