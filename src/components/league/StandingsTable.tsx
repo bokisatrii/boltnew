@@ -1,4 +1,5 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, memo, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronUp, ChevronDown, HelpCircle } from 'lucide-react';
 import AnimatedSection from '../ui/AnimatedSection';
 import { ProcessedTeam } from '../../types';
@@ -12,13 +13,66 @@ interface StandingsTableProps {
 type SortKey = 'name' | 'wins' | 'losses' | 'ties' | 'pct' | 'gb' | 'rank';
 type SortDirection = 'asc' | 'desc';
 
+// Nova Tooltip komponenta sa Portal
+const Tooltip: React.FC<{ text: string; children: React.ReactNode; id: string }> = ({ text, children, id }) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
+  const triggerRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseEnter = () => {
+    if (triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      setTooltipPosition({
+        top: rect.top - 8,
+        left: rect.left + rect.width / 2
+      });
+      setShowTooltip(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setShowTooltip(false);
+  };
+
+  return (
+    <>
+      <div
+        ref={triggerRef}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        className="cursor-help inline-flex"
+      >
+        {children}
+      </div>
+      {showTooltip && createPortal(
+        <div 
+          className="fixed z-[99999] pointer-events-none"
+          style={{
+            top: `${tooltipPosition.top}px`,
+            left: `${tooltipPosition.left}px`,
+          }}
+        >
+          <div className="relative -translate-x-1/2 -translate-y-full">
+            <div className="px-3 py-2 bg-gray-900 text-white text-sm rounded-lg whitespace-nowrap shadow-xl mb-2">
+              {text}
+              <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-px">
+                <div className="border-4 border-transparent border-t-gray-900"></div>
+              </div>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+    </>
+  );
+};
+
 const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, loading, error }) => {
   const [teams, setTeams] = useState<ProcessedTeam[]>([]);
   const [sortConfig, setSortConfig] = useState<{
     key: SortKey;
     direction: SortDirection;
   }>({ key: 'rank', direction: 'asc' });
-  const [showTooltip, setShowTooltip] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
 
   // Proveri da li je mobilni uređaj
@@ -35,7 +89,6 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
 
   // Ažuriraj lokalni state kada se promene props
   useEffect(() => {
-    console.log('StandingsTable received teams:', initialTeams);
     if (initialTeams && initialTeams.length > 0) {
       setTeams([...initialTeams]);
     }
@@ -52,12 +105,10 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
       let aValue: any = a[key];
       let bValue: any = b[key];
       
-      // Special handling for percentage and games behind
       if (key === 'pct') {
         aValue = parseFloat(aValue);
         bValue = parseFloat(bValue);
       } else if (key === 'gb') {
-        // Handle '-' as 0 for sorting
         aValue = aValue === '-' ? 0 : parseFloat(aValue);
         bValue = bValue === '-' ? 0 : parseFloat(bValue);
       }
@@ -84,24 +135,6 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
       ? <ChevronUp size={16} /> 
       : <ChevronDown size={16} />;
   };
-
-  const Tooltip: React.FC<{ text: string; children: React.ReactNode; id: string }> = ({ text, children, id }) => (
-    <div className="relative inline-block">
-      <div
-        onMouseEnter={() => setShowTooltip(id)}
-        onMouseLeave={() => setShowTooltip(null)}
-        className="cursor-help"
-      >
-        {children}
-      </div>
-      {showTooltip === id && (
-        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg whitespace-nowrap z-50 shadow-xl">
-          {text}
-          <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
-        </div>
-      )}
-    </div>
-  );
 
   // Memorisana komponenta za mobilni prikaz reda
   const MobileTeamRow = memo<{ team: ProcessedTeam }>(({ team }) => (
@@ -240,7 +273,7 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
     <AnimatedSection className="overflow-hidden rounded-lg shadow">
       <div className="overflow-x-auto">
         <table className="w-full text-left">
-          <thead className="bg-blue-600 text-white sticky top-0 z-50 relative">
+          <thead className="bg-blue-600 text-white sticky top-0 z-40">
             <tr>
               <th className="px-4 py-5 font-semibold text-sm text-center min-w-[44px]">#</th>
               <th 
