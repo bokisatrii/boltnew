@@ -63,23 +63,51 @@ export const fetchYahooFantasyData = async (): Promise<ProcessedTeam[]> => {
 const transformYahooData = (yahooData: YahooFantasyTeam[]): ProcessedTeam[] => {
   console.log('Transforming Yahoo data:', yahooData);
   
-  return yahooData.map((team, index) => {
-    console.log(`Processing team ${index + 1}:`, team);
+  // Prvo filtriraj samo validne timove
+  const validTeams = yahooData.filter((team, index) => {
+    console.log(`Checking team ${index + 1}:`, team);
     
-    // Parse W-L-T format with null check
-    const wltParts = (team.wlt || '0-0-0').split('-');
+    // Proveri da li tim ima ime i da nije null
+    if (!team || !team.team || team.team.trim() === '') {
+      console.log(`Team ${index + 1} is invalid - no name`);
+      return false;
+    }
+    
+    // Proveri da li tim ima W-L-T podatke
+    if (!team.wlt || team.wlt === '0-0-0') {
+      console.log(`Team ${index + 1} (${team.team}) has no games played`);
+      return false;
+    }
+    
+    // Proveri da li je ime tima generičko
+    if (team.team.startsWith('Team ') && /Team \d+/.test(team.team)) {
+      console.log(`Team ${index + 1} has generic name: ${team.team}`);
+      return false;
+    }
+    
+    return true;
+  });
+  
+  console.log(`Found ${validTeams.length} valid teams out of ${yahooData.length} total`);
+  
+  // Transformiši samo validne timove
+  const processedTeams = validTeams.map((team, index) => {
+    console.log(`Processing valid team ${index + 1}:`, team);
+    
+    // Parse W-L-T format
+    const wltParts = team.wlt.split('-');
     const wins = parseInt(wltParts[0] || '0', 10);
     const losses = parseInt(wltParts[1] || '0', 10);
     const ties = parseInt(wltParts[2] || '0', 10);
 
-    // Extract rank number and playoff status with null check
-    const rankStr = (team.rank || '0').replace('*', '');
+    // Extract rank number and playoff status
+    const rankStr = (team.rank || `${index + 1}`).toString().replace('*', '');
     const rank = parseInt(rankStr, 10) || (index + 1);
-    const clinched_playoff = (team.rank || '').includes('*');
+    const clinched_playoff = (team.rank || '').toString().includes('*');
 
     const processedTeam = {
       id: index + 1,
-      name: team.team || `Team ${index + 1}`,
+      name: team.team,
       logo: team.logo || 'https://s.yimg.com/cv/apiv2/default/nba/nba_4_p.png',
       wins,
       losses,
@@ -95,6 +123,16 @@ const transformYahooData = (yahooData: YahooFantasyTeam[]): ProcessedTeam[] => {
     console.log(`Processed team ${index + 1}:`, processedTeam);
     return processedTeam;
   });
+  
+  // Sortiraj po ranku
+  processedTeams.sort((a, b) => a.rank - b.rank);
+  
+  // Ažuriraj ID-jeve nakon sortiranja
+  processedTeams.forEach((team, index) => {
+    team.id = index + 1;
+  });
+  
+  return processedTeams;
 };
 
 // Fallback function to get static data if API fails
