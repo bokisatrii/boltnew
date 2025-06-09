@@ -240,7 +240,7 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
     <AnimatedSection className="overflow-hidden rounded-lg shadow">
       <div className="overflow-x-auto">
         <table className="w-full text-left">
-          <thead className="bg-blue-600 text-white sticky top-0 z-40">
+          <thead className="bg-blue-600 text-white sticky top-0 z-50 relative">
             <tr>
               <th className="px-4 py-5 font-semibold text-sm text-center min-w-[44px]">#</th>
               <th 
