@@ -48,30 +48,30 @@ export const fetchYahooFantasyData = async (): Promise<ProcessedTeam[]> => {
 
 const transformYahooData = (yahooData: YahooFantasyTeam[]): ProcessedTeam[] => {
   return yahooData.map((team, index) => {
-    // Parse W-L-T format
-    const wltParts = team.wlt.split('-');
+    // Parse W-L-T format with null check
+    const wltParts = (team.wlt || '').split('-');
     const wins = parseInt(wltParts[0] || '0', 10);
     const losses = parseInt(wltParts[1] || '0', 10);
     const ties = parseInt(wltParts[2] || '0', 10);
 
-    // Extract rank number and playoff status
-    const rankStr = team.rank.replace('*', '');
-    const rank = parseInt(rankStr, 10);
-    const clinched_playoff = team.rank.includes('*');
+    // Extract rank number and playoff status with null check
+    const rankStr = (team.rank || '').replace('*', '');
+    const rank = parseInt(rankStr, 10) || 0;
+    const clinched_playoff = (team.rank || '').includes('*');
 
     return {
       id: index + 1,
-      name: team.team,
-      logo: team.logo,
+      name: team.team || 'Unknown Team',
+      logo: team.logo || 'https://s.yimg.com/cv/apiv2/default/nba/nba_4_p.png',
       wins,
       losses,
       ties,
-      pct: team.pct,
-      gb: team.gb,
+      pct: team.pct || '.000',
+      gb: team.gb || '-',
       rank,
       clinched_playoff,
-      waiver: team.waiver,
-      lastweek: team.lastweek,
+      waiver: team.waiver || '0',
+      lastweek: team.lastweek || '-',
     };
   });
 };
