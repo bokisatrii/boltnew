@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { ChevronUp, ChevronDown, HelpCircle } from 'lucide-react';
 import AnimatedSection from '../ui/AnimatedSection';
 import { ProcessedTeam } from '../../types';
@@ -19,6 +19,19 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
     direction: SortDirection;
   }>({ key: 'rank', direction: 'asc' });
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Proveri da li je mobilni uređaj
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Ažuriraj lokalni state kada se promene props
   useEffect(() => {
@@ -82,14 +95,79 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
         {children}
       </div>
       {showTooltip === id && (
-        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg whitespace-nowrap z-10">
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg whitespace-nowrap z-50 shadow-xl">
           {text}
-          <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
         </div>
       )}
     </div>
   );
 
+  // Memorisana komponenta za mobilni prikaz reda
+  const MobileTeamRow = memo<{ team: ProcessedTeam }>(({ team }) => (
+    <div className="bg-white p-4 mb-2 rounded-lg shadow-sm border border-gray-100">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center space-x-3">
+          <div className="flex items-center">
+            <span className="font-bold text-lg text-gray-700">#{team.rank}</span>
+            {team.clinched_playoff && (
+              <span className="ml-1 text-green-600 font-bold">*</span>
+            )}
+          </div>
+          <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
+            <img 
+              src={team.logo} 
+              alt={team.name}
+              loading="lazy"
+              className="w-full h-full object-cover" 
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = 'https://s.yimg.com/cv/apiv2/default/nba/nba_4_p.png';
+              }}
+            />
+          </div>
+          <div>
+            <div className="font-semibold text-gray-800">{team.name}</div>
+            <div className="text-sm text-gray-600">
+              <span className="text-green-600 font-medium">{team.wins}</span>
+              <span className="text-gray-400 mx-1">-</span>
+              <span className="text-red-600 font-medium">{team.losses}</span>
+              {team.ties > 0 && (
+                <>
+                  <span className="text-gray-400 mx-1">-</span>
+                  <span className="text-yellow-600 font-medium">{team.ties}</span>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="text-right">
+          <div className="font-bold text-lg">{team.pct}</div>
+          <div className="text-sm text-gray-600">
+            GB: {team.gb === '-' ? <span className="text-blue-600 font-bold">-</span> : team.gb}
+          </div>
+        </div>
+      </div>
+      <div className="flex justify-between text-sm text-gray-600 border-t pt-2">
+        <div>
+          <span className="font-medium">LW:</span> 
+          {team.lastweek === '-' ? (
+            <span className="text-gray-400 ml-1">-</span>
+          ) : team.lastweek.startsWith('+') ? (
+            <span className="text-green-600 font-medium ml-1">{team.lastweek}</span>
+          ) : (
+            <span className="text-red-600 font-medium ml-1">{team.lastweek}</span>
+          )}
+        </div>
+        <div>
+          <span className="font-medium">Waiver:</span> 
+          <span className="ml-1">{team.waiver}</span>
+        </div>
+      </div>
+    </div>
+  ));
+
+  // Loading state
   if (loading) {
     return (
       <AnimatedSection className="overflow-hidden rounded-lg shadow">
@@ -101,6 +179,7 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
     );
   }
 
+  // Error state
   if (error) {
     return (
       <AnimatedSection className="overflow-hidden rounded-lg shadow">
@@ -112,7 +191,7 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
     );
   }
 
-  // Proveri da li ima timova za prikaz
+  // Empty state
   if (!teams || teams.length === 0) {
     return (
       <AnimatedSection className="overflow-hidden rounded-lg shadow">
@@ -123,15 +202,49 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
     );
   }
 
+  // Mobilni prikaz
+  if (isMobile) {
+    return (
+      <AnimatedSection>
+        <div className="mb-4">
+          <div className="flex items-center justify-between bg-blue-600 text-white p-3 rounded-t-lg">
+            <h3 className="font-semibold">Tabela lige</h3>
+            <button
+              onClick={() => sortTeams('rank')}
+              className="text-sm bg-blue-700 px-3 py-1 rounded hover:bg-blue-800 transition-colors"
+            >
+              Sortiraj po ranku {getSortIcon('rank')}
+            </button>
+          </div>
+        </div>
+        <div className="space-y-2">
+          {teams.map((team) => (
+            <MobileTeamRow key={team.id} team={team} />
+          ))}
+        </div>
+        <div className="bg-gray-50 px-4 py-3 text-xs text-gray-500 rounded-b-lg mt-4">
+          <div className="flex items-center mb-2">
+            <span className="inline-block mr-2 bg-green-500 w-3 h-3 rounded-full"></span>
+            <span>Plasirali se u playoff (*)</span>
+          </div>
+          <div className="text-right">
+            Ažurirano: {new Date().toLocaleString('sr-RS')}
+          </div>
+        </div>
+      </AnimatedSection>
+    );
+  }
+
+  // Desktop prikaz
   return (
     <AnimatedSection className="overflow-hidden rounded-lg shadow">
       <div className="overflow-x-auto">
         <table className="w-full text-left">
-          <thead className="bg-blue-600 text-white">
+          <thead className="bg-blue-600 text-white sticky top-0 z-40">
             <tr>
-              <th className="px-3 py-4 font-semibold text-sm text-center">#</th>
+              <th className="px-4 py-5 font-semibold text-sm text-center min-w-[44px]">#</th>
               <th 
-                className="px-3 py-4 font-semibold text-sm cursor-pointer hover:bg-blue-700 transition-colors"
+                className="px-4 py-5 font-semibold text-sm cursor-pointer hover:bg-blue-700 transition-colors min-w-[44px]"
                 onClick={() => sortTeams('name')}
               >
                 <div className="flex items-center space-x-1">
@@ -140,7 +253,7 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
                 </div>
               </th>
               <th 
-                className="px-3 py-4 font-semibold text-sm text-center cursor-pointer hover:bg-blue-700 transition-colors"
+                className="px-4 py-5 font-semibold text-sm text-center cursor-pointer hover:bg-blue-700 transition-colors min-w-[44px]"
                 onClick={() => sortTeams('wins')}
               >
                 <Tooltip text="Pobede-Porazi-Nerešeno" id="wlt">
@@ -152,7 +265,7 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
                 </Tooltip>
               </th>
               <th 
-                className="px-3 py-4 font-semibold text-sm text-center cursor-pointer hover:bg-blue-700 transition-colors"
+                className="px-4 py-5 font-semibold text-sm text-center cursor-pointer hover:bg-blue-700 transition-colors min-w-[44px]"
                 onClick={() => sortTeams('pct')}
               >
                 <Tooltip text="Procenat pobeda" id="pct">
@@ -164,7 +277,7 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
                 </Tooltip>
               </th>
               <th 
-                className="px-3 py-4 font-semibold text-sm text-center cursor-pointer hover:bg-blue-700 transition-colors"
+                className="px-4 py-5 font-semibold text-sm text-center cursor-pointer hover:bg-blue-700 transition-colors min-w-[44px]"
                 onClick={() => sortTeams('gb')}
               >
                 <Tooltip text="Razlika od prvog mesta" id="gb">
@@ -175,7 +288,7 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
                   </div>
                 </Tooltip>
               </th>
-              <th className="px-3 py-4 font-semibold text-sm text-center">
+              <th className="px-4 py-5 font-semibold text-sm text-center min-w-[44px]">
                 <Tooltip text="Prošla nedelja" id="lastweek">
                   <div className="flex items-center justify-center space-x-1">
                     <span>LW</span>
@@ -183,7 +296,7 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
                   </div>
                 </Tooltip>
               </th>
-              <th className="px-3 py-4 font-semibold text-sm text-center">
+              <th className="px-4 py-5 font-semibold text-sm text-center min-w-[44px]">
                 <Tooltip text="Waiver pozicija" id="waiver">
                   <div className="flex items-center justify-center space-x-1">
                     <span>W#</span>
@@ -194,14 +307,14 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 bg-white">
-            {teams.map((team, index) => (
+            {teams.map((team) => (
               <tr 
                 key={team.id} 
                 className={`hover:bg-gray-50 transition-colors ${
                   team.clinched_playoff ? 'border-l-4 border-green-500 bg-green-50' : ''
                 }`}
               >
-                <td className="px-3 py-4 text-center font-semibold">
+                <td className="px-4 py-4 text-center font-semibold">
                   <div className="flex items-center justify-center">
                     {team.rank}
                     {team.clinched_playoff && (
@@ -209,12 +322,13 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
                     )}
                   </div>
                 </td>
-                <td className="px-3 py-4">
+                <td className="px-4 py-4">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
                       <img 
                         src={team.logo} 
-                        alt={team.name} 
+                        alt={team.name}
+                        loading="lazy"
                         className="w-full h-full object-cover" 
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
@@ -225,7 +339,7 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
                     <span className="font-medium text-sm lg:text-base">{team.name}</span>
                   </div>
                 </td>
-                <td className="px-3 py-4 text-center text-sm">
+                <td className="px-4 py-4 text-center text-sm">
                   <div className="font-medium">
                     <span className="text-green-600">{team.wins}</span>
                     <span className="text-gray-400 mx-1">-</span>
@@ -238,15 +352,15 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
                     )}
                   </div>
                 </td>
-                <td className="px-3 py-4 text-center font-medium text-sm">{team.pct}</td>
-                <td className="px-3 py-4 text-center font-medium text-sm">
+                <td className="px-4 py-4 text-center font-medium text-sm">{team.pct}</td>
+                <td className="px-4 py-4 text-center font-medium text-sm">
                   {team.gb === '-' ? (
                     <span className="text-blue-600 font-bold">-</span>
                   ) : (
                     <span>{team.gb}</span>
                   )}
                 </td>
-                <td className="px-3 py-4 text-center text-sm">
+                <td className="px-4 py-4 text-center text-sm">
                   {team.lastweek === '-' ? (
                     <span className="text-gray-400">-</span>
                   ) : team.lastweek.startsWith('+') ? (
@@ -255,7 +369,7 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
                     <span className="text-red-600 font-medium">{team.lastweek}</span>
                   )}
                 </td>
-                <td className="px-3 py-4 text-center text-sm font-medium">{team.waiver}</td>
+                <td className="px-4 py-4 text-center text-sm font-medium">{team.waiver}</td>
               </tr>
             ))}
           </tbody>
