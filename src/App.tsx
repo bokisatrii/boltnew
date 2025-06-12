@@ -1,32 +1,48 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
-import Home from './pages/Home';
-import League from './pages/League';
-import News from './pages/News';
-import NewsDetail from './pages/NewsDetail';
-import Register from './pages/Register';
-import Contact from './pages/Contact';
+import LoadingSpinner from './components/ui/LoadingSpinner';
+import ErrorBoundary from './components/ErrorBoundary';
+
+// Lazy load stranica za bolju performance
+const Home = React.lazy(() => import('./pages/Home'));
+const League = React.lazy(() => import('./pages/League'));
+const News = React.lazy(() => import('./pages/News'));
+const NewsDetail = React.lazy(() => import('./pages/NewsDetail'));
+const Register = React.lazy(() => import('./pages/Register'));
+const Contact = React.lazy(() => import('./pages/Contact'));
 
 function App() {
   return (
-    <Router>
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/league" element={<League />} />
-            <Route path="/news" element={<News />} />
-            <Route path="/news/:slug" element={<NewsDetail />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/contact" element={<Contact />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <div className="flex flex-col min-h-screen">
+          <Header />
+          <main className="flex-grow">
+            <Suspense fallback={<LoadingSpinner />}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/league" element={<League />} />
+                <Route path="/news" element={<News />} />
+                <Route path="/news/:slug" element={<NewsDetail />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/contact" element={<Contact />} />
+                {/* 404 stranica */}
+                <Route path="*" element={
+                  <div className="section text-center">
+                    <h1 className="text-4xl font-bold mb-4">404</h1>
+                    <p className="text-xl mb-8">Stranica nije pronađena</p>
+                    <a href="/" className="btn btn-primary">Nazad na početnu</a>
+                  </div>
+                } />
+              </Routes>
+            </Suspense>
+          </main>
+          <Footer />
+        </div>
+      </Router>
+    </ErrorBoundary>
   );
 }
 

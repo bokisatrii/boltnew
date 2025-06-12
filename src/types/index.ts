@@ -9,6 +9,34 @@ export interface Team {
   pointsDifference: number;
 }
 
+export interface YahooFantasyTeam {
+  rank: string;
+  team: string;
+  wlt: string;
+  pct: string;
+  gb: string;
+  lastweek: string;
+  waiver: string;
+  logo: string;
+  clinched_playoff?: boolean;
+  rank_number?: number;
+}
+
+export interface ProcessedTeam {
+  id: number;
+  name: string;
+  logo: string;
+  wins: number;
+  losses: number;
+  ties: number;
+  pct: string;
+  gb: string;
+  rank: number;
+  clinched_playoff: boolean;
+  waiver: string;
+  lastweek: string;
+}
+
 export interface Match {
   id: number;
   date: string;
