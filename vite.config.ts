@@ -12,7 +12,9 @@ export default defineConfig({
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom'],
-          'ui-vendor': ['lucide-react', 'framer-motion']
+          'router-vendor': ['react-router-dom'],
+          'ui-vendor': ['lucide-react', 'framer-motion'],
+          'form-vendor': ['react-hook-form']
         }
       }
     },
