@@ -2,7 +2,7 @@ import { YahooFantasyTeam, ProcessedTeam } from '../types';
 
 // SheetBest konfiguracija
 const API_URL = 'https://api.sheetbest.com/sheets/8576367a-3317-4c4b-b799-743de993d677';
-const API_KEY = import.meta.env.VITE_SHEETBEST_API_KEY;
+const API_KEY = 'zerX4Q2@u!d5iII2!m56HuRwLon40HwqKAsA8cR1Xx3YaxNC56lsqVnxa66pY7eH';
 
 // Keširanje podataka (5 minuta)
 const CACHE_DURATION = 5 * 60 * 1000;
