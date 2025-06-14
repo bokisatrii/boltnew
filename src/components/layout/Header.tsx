@@ -1,17 +1,16 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Header: React.FC = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);           // prati da li je skrolovano
+  const [isMenuOpen, setIsMenuOpen] = useState(false);           // mobile menu
   const location = useLocation();
 
-  // Optimizovano scroll handling sa throttling
+  // Detekcija skrolovanja radi promene stila navbar-a
   useEffect(() => {
     let ticking = false;
-    
     const handleScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
@@ -21,51 +20,39 @@ const Header: React.FC = () => {
         ticking = true;
       }
     };
-
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Auto-close menu na route change
+  // Zatvori meni kad se promeni stranica
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location]);
 
-  // Memoized navigation links
-  const navigationLinks = useMemo(() => [
-    { name: 'Početna', path: '/' },
-    { name: 'Liga', path: '/league' },
-    { name: 'Vesti', path: '/news' },
-    { name: 'Kontakt', path: '/contact' },
-  ], []);
+  // Definisanje klase linkova (aktivni vs neaktivni)
+  const navLinkClass = (path: string) =>
+    location.pathname === path
+      ? "text-blue-600 font-semibold"
+      : "text-gray-700 hover:text-blue-600 transition";
 
-  const isActive = useCallback((path: string) => {
-    if (path === '/') {
-      return location.pathname === '/';
-    }
-    return location.pathname.startsWith(path);
-  }, [location.pathname]);
-
+  // Toggle za mobile meni
   const toggleMenu = useCallback(() => {
     setIsMenuOpen(prev => !prev);
   }, []);
 
-  // Keyboard accessibility za mobile menu
+  // Keyboard accessibility + zabrana scrolla kad je meni otvoren
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isMenuOpen) {
         setIsMenuOpen(false);
       }
     };
-
     if (isMenuOpen) {
       document.addEventListener('keydown', handleKeyDown);
-      // Prevent body scroll kada je menu otvoren
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
-
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
@@ -97,31 +84,24 @@ const Header: React.FC = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex space-x-8" role="navigation" aria-label="Glavna navigacija">
-          {navigationLinks.map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
-              className={`relative font-medium transition-colors duration-300 ${
-                isScrolled ? 'text-gray-700 hover:text-blue-600' : 'text-white hover:text-orange-300'
-              } ${isActive(link.path) ? 'font-bold' : ''}`}
-              aria-current={isActive(link.path) ? 'page' : undefined}
-            >
-              {link.name}
-              {isActive(link.path) && (
-                <motion.div
-                  layoutId="underline"
-                  className={`absolute -bottom-1 left-0 right-0 h-0.5 ${
-                    isScrolled ? 'bg-blue-600' : 'bg-orange-500'
-                  }`}
-                  transition={{ type: "spring", duration: 0.6 }}
-                />
-              )}
-            </Link>
-          ))}
+        <nav className="hidden md:flex gap-6 items-center text-sm font-medium">
+          <Link to="/" className={navLinkClass('/')}>Početna</Link>
+          <Link to="/news" className={navLinkClass('/news')}>Vesti</Link>
+          <Link to="/nba" className={navLinkClass('/nba')}>NBA</Link>
+          <Link to="/europe" className={navLinkClass('/europe')}>Evropa</Link>
+          <Link to="/ncaa" className={navLinkClass('/ncaa')}>NCAA</Link>
+
+          {/* Dropdown za "Fantasy" */}
+          <div className="relative group">
+            <button className="text-gray-700 hover:text-blue-600 transition">Fantasy</button>
+            <div className="absolute left-0 mt-2 bg-white shadow-md rounded hidden group-hover:block z-10 min-w-[120px]">
+              <Link to="/fantasy-news" className="block px-4 py-2 hover:bg-gray-100">Vesti</Link>
+              <Link to="/league" className="block px-4 py-2 hover:bg-gray-100">Tabela</Link>
+            </div>
+          </div>
         </nav>
 
-        {/* CTA Button */}
+        {/* CTA dugme */}
         <Link 
           to="/register" 
           className={`hidden md:block btn ${
@@ -131,7 +111,7 @@ const Header: React.FC = () => {
           Prijavi ekipu
         </Link>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile meni dugme */}
         <button 
           onClick={toggleMenu}
           className="md:hidden text-2xl p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
@@ -156,7 +136,7 @@ const Header: React.FC = () => {
       <AnimatePresence>
         {isMenuOpen && (
           <>
-            {/* Overlay */}
+            {/* Overlay za zatamnjenje */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -164,8 +144,8 @@ const Header: React.FC = () => {
               className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
               onClick={() => setIsMenuOpen(false)}
             />
-            
-            {/* Menu */}
+
+            {/* Meni */}
             <motion.nav
               id="mobile-menu"
               initial={{ opacity: 0, height: 0 }}
@@ -177,36 +157,19 @@ const Header: React.FC = () => {
               aria-label="Mobilna navigacija"
             >
               <div className="container py-6 flex flex-col space-y-4">
-                {navigationLinks.map((link, index) => (
-                  <motion.div
-                    key={link.path}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <Link
-                      to={link.path}
-                      className={`text-gray-800 hover:text-blue-600 py-3 text-lg block transition-colors duration-200 ${
-                        isActive(link.path) ? 'font-bold text-blue-600' : ''
-                      }`}
-                      aria-current={isActive(link.path) ? 'page' : undefined}
-                    >
-                      {link.name}
-                    </Link>
-                  </motion.div>
-                ))}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
+                <Link to="/" className="text-gray-800 hover:text-blue-600 py-3 text-lg block">Početna</Link>
+                <Link to="/news" className="text-gray-800 hover:text-blue-600 py-3 text-lg block">Vesti</Link>
+                <Link to="/nba" className="text-gray-800 hover:text-blue-600 py-3 text-lg block">NBA</Link>
+                <Link to="/europe" className="text-gray-800 hover:text-blue-600 py-3 text-lg block">Evropa</Link>
+                <Link to="/ncaa" className="text-gray-800 hover:text-blue-600 py-3 text-lg block">NCAA</Link>
+                <Link to="/fantasy-news" className="text-gray-800 hover:text-blue-600 py-3 text-lg block">Fantasy Vesti</Link>
+                <Link to="/league" className="text-gray-800 hover:text-blue-600 py-3 text-lg block">Tabela</Link>
+                <Link 
+                  to="/register" 
+                  className="btn btn-primary text-center mt-4 w-full"
                 >
-                  <Link 
-                    to="/register" 
-                    className="btn btn-primary text-center mt-4 w-full"
-                  >
-                    Prijavi ekipu
-                  </Link>
-                </motion.div>
+                  Prijavi ekipu
+                </Link>
               </div>
             </motion.nav>
           </>
