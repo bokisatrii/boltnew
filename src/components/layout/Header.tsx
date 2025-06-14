@@ -48,6 +48,11 @@ const Header: React.FC = () => {
     };
   }, [isMenuOpen]);
 
+  // Toggle menu function
+  const toggleMenu = useCallback(() => {
+    setIsMenuOpen(!isMenuOpen);
+  }, [isMenuOpen]);
+
   // Pomocna funkcija da oboji aktivni link
   const isActive = (path: string) => location.pathname === path;
 
