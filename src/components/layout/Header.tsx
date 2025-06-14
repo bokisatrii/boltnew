@@ -4,11 +4,11 @@ import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Header: React.FC = () => {
-  const [isScrolled, setIsScrolled] = useState(false);           // prati da li je skrolovano
-  const [isMenuOpen, setIsMenuOpen] = useState(false);           // mobile menu
+  const [isScrolled, setIsScrolled] = useState(false);            // prati da li je skrolovano
+  const [isMenuOpen, setIsMenuOpen] = useState(false);            // mobile menu toggle
   const location = useLocation();
 
-  // Detekcija skrolovanja radi promene stila navbar-a
+  // Prati scroll da bi promenio stil navbara (npr. dodao senku)
   useEffect(() => {
     let ticking = false;
     const handleScroll = () => {
@@ -24,23 +24,12 @@ const Header: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Zatvori meni kad se promeni stranica
+  // Zatvori meni kad se promeni ruta
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location]);
 
-  // Definisanje klase linkova (aktivni vs neaktivni)
-  const navLinkClass = (path: string) =>
-    location.pathname === path
-      ? "text-blue-600 font-semibold"
-      : "text-gray-700 hover:text-blue-600 transition";
-
-  // Toggle za mobile meni
-  const toggleMenu = useCallback(() => {
-    setIsMenuOpen(prev => !prev);
-  }, []);
-
-  // Keyboard accessibility + zabrana scrolla kad je meni otvoren
+  // Dodaj/ukloni body scroll i escape shortcut za mobilni meni
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isMenuOpen) {
@@ -58,6 +47,9 @@ const Header: React.FC = () => {
       document.body.style.overflow = 'unset';
     };
   }, [isMenuOpen]);
+
+  // Pomocna funkcija da oboji aktivni link
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <header 
@@ -83,17 +75,39 @@ const Header: React.FC = () => {
           </span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex gap-6 items-center text-sm font-medium">
-          <Link to="/" className={navLinkClass('/')}>Početna</Link>
-          <Link to="/news" className={navLinkClass('/news')}>Vesti</Link>
-          <Link to="/nba" className={navLinkClass('/nba')}>NBA</Link>
-          <Link to="/europe" className={navLinkClass('/europe')}>Evropa</Link>
-          <Link to="/ncaa" className={navLinkClass('/ncaa')}>NCAA</Link>
+        {/* Navigacija - desktop verzija */}
+        <nav className="hidden md:flex gap-2 items-center text-sm font-medium">
+          {[
+            { name: 'Početna', path: '/' },
+            { name: 'Vesti', path: '/news' },
+            { name: 'NBA', path: '/nba' },
+            { name: 'Evropa', path: '/europe' },
+            { name: 'NCAA', path: '/ncaa' },
+          ].map((link) => (
+            <Link
+              key={link.path}
+              to={link.path}
+              className={`px-4 py-1.5 rounded-full transition-colors duration-200 ${
+                isActive(link.path)
+                  ? 'bg-blue-100 text-blue-700 font-semibold'
+                  : isScrolled
+                  ? 'text-gray-800 hover:bg-gray-100'
+                  : 'text-white hover:bg-white/20'
+              }`}
+            >
+              {link.name}
+            </Link>
+          ))}
 
           {/* Dropdown za "Fantasy" */}
           <div className="relative group">
-            <button className="text-gray-700 hover:text-blue-600 transition">Fantasy</button>
+            <button
+              className={`px-4 py-1.5 rounded-full transition-colors duration-200 ${
+                isScrolled ? 'text-gray-800 hover:bg-gray-100' : 'text-white hover:bg-white/20'
+              }`}
+            >
+              Fantasy
+            </button>
             <div className="absolute left-0 mt-2 bg-white shadow-md rounded hidden group-hover:block z-10 min-w-[120px]">
               <Link to="/fantasy-news" className="block px-4 py-2 hover:bg-gray-100">Vesti</Link>
               <Link to="/league" className="block px-4 py-2 hover:bg-gray-100">Tabela</Link>
@@ -111,7 +125,7 @@ const Header: React.FC = () => {
           Prijavi ekipu
         </Link>
 
-        {/* Mobile meni dugme */}
+        {/* Mobilni toggle meni */}
         <button 
           onClick={toggleMenu}
           className="md:hidden text-2xl p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
@@ -132,11 +146,11 @@ const Header: React.FC = () => {
         </button>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* Navigacija - mobilna verzija */}
       <AnimatePresence>
         {isMenuOpen && (
           <>
-            {/* Overlay za zatamnjenje */}
+            {/* Overlay */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
