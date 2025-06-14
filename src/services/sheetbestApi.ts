@@ -1,105 +1,64 @@
-import { YahooFantasyTeam, ProcessedTeam } from '../types';
+import { YahooFantasyTeam, ProcessedTeam, BlogPost } from '../types';
 
-// SheetBest konfiguracija
 const API_URL = 'https://api.sheetbest.com/sheets/8576367a-3317-4c4b-b799-743de993d677';
 const API_KEY = 'zerX4Q2@u!d5iII2!m56HuRwLon40HwqKAsA8cR1Xx3YaxNC56lsqVnxa66pY7eH';
 
-// Keširanje podataka (5 minuta)
 const CACHE_DURATION = 5 * 60 * 1000;
-interface CacheEntry {
-  data: ProcessedTeam[];
+
+interface CacheEntry<T> {
+  data: T[];
   timestamp: number;
 }
-let cache: CacheEntry | null = null;
 
-// Glavna funkcija za dohvat podataka sa SheetBest API-ja
+let teamCache: CacheEntry<ProcessedTeam> | null = null;
+let blogCache: CacheEntry<BlogPost> | null = null;
+
+// ===== TEAM DATA SCRAPER (isti kao ranije) =====
 export const fetchYahooFantasyData = async (): Promise<ProcessedTeam[]> => {
-  // ✅ Ako imamo keširane podatke i nisu istekli, vrati ih
-  if (cache && Date.now() - cache.timestamp < CACHE_DURATION) {
-    console.log('📦 Vraćam keširane podatke');
-    return cache.data;
+  if (teamCache && Date.now() - teamCache.timestamp < CACHE_DURATION) {
+    console.log('📦 Vraćam keširane timove');
+    return teamCache.data;
   }
 
   try {
-    if (!API_KEY) {
-      console.warn('⚠️ API key nije postavljen! Koristim statičke podatke.');
-      return getStaticTeamsData();
-    }
-
-    console.log('🌐 Učitavam podatke sa SheetBest API-ja...');
-    const response = await fetch(API_URL, {
-      method: 'GET',
-      headers: {
-        'X-Api-Key': API_KEY,
-        'Content-Type': 'application/json',
-      },
+    const res = await fetch(API_URL, {
+      headers: { 'X-Api-Key': API_KEY, 'Content-Type': 'application/json' },
     });
+    const rawData: YahooFantasyTeam[] = await res.json();
+    const valid = rawData.filter(team => team?.team && team?.wlt !== '0-0-0');
+    const teams = valid.map((team, i) => {
+      const [w, l, t] = team.wlt.split('-').map(Number);
+      const rank = parseInt((team.rank || `${i + 1}`).replace('*', '')) || i + 1;
+      return {
+        id: i + 1,
+        name: team.team,
+        logo: team.logo || '',
+        wins: w || 0,
+        losses: l || 0,
+        ties: t || 0,
+        pct: team.pct,
+        gb: team.gb,
+        rank,
+        clinched_playoff: (team.rank || '').includes('*'),
+        waiver: team.waiver,
+        lastweek: team.lastweek,
+      };
+    }).sort((a, b) => a.rank - b.rank);
 
-    if (!response.ok) {
-      throw new Error(`❌ HTTP greška: ${response.status}`);
-    }
+    teamCache = { data: teams, timestamp: Date.now() };
+    return teams;
 
-    const rawData: YahooFantasyTeam[] = await response.json();
-    if (!Array.isArray(rawData) || rawData.length === 0) {
-      console.warn('⚠️ Prazni podaci vraćeni sa API-ja. Koristim rezervne.');
-      return getStaticTeamsData();
-    }
-
-    const processed = transformYahooData(rawData);
-    console.log(`✅ Učitano ${processed.length} validnih timova`);
-
-    // 🧠 Sačuvaj u keš
-    cache = { data: processed, timestamp: Date.now() };
-    return processed;
-
-  } catch (error) {
-    console.error('❌ Greška pri dohvatu:', error);
+  } catch (err) {
+    console.error('❌ Greška kod timova:', err);
     return getStaticTeamsData();
   }
 };
 
-// Pretvaranje sirovih Yahoo podataka u formatiran niz timova
-const transformYahooData = (data: YahooFantasyTeam[]): ProcessedTeam[] => {
-  const validTeams = data.filter(team => {
-    const isValidName = team?.team && team.team.trim() !== '';
-    const isValidWLT = team?.wlt && team.wlt !== '0-0-0';
-    const isGeneric = /^Team \d+$/.test(team.team || '');
-    return isValidName && isValidWLT && !isGeneric;
-  });
-
-  console.log(`🔍 ${validTeams.length} validnih od ukupno ${data.length}`);
-
-  const teams = validTeams.map((team, index) => {
-    const [w, l, t] = team.wlt.split('-').map(n => parseInt(n));
-    const cleanedRank = (team.rank || `${index + 1}`).replace('*', '');
-    const rank = parseInt(cleanedRank) || index + 1;
-    return {
-      id: index + 1,
-      name: team.team,
-      logo: team.logo || 'https://s.yimg.com/cv/apiv2/default/nba/nba_4_p.png',
-      wins: w || 0,
-      losses: l || 0,
-      ties: t || 0,
-      pct: team.pct || '.000',
-      gb: team.gb || '-',
-      rank,
-      clinched_playoff: (team.rank || '').includes('*'),
-      waiver: team.waiver || '0',
-      lastweek: team.lastweek || '-'
-    };
-  });
-
-  // Sortiraj po ranku i dodeli nove ID-jeve
-  teams.sort((a, b) => a.rank - b.rank);
-  return teams.map((team, i) => ({ ...team, id: i + 1 }));
-};
-
-// Ako padne API poziv – koristi rezervne (dummy) podatke
 export const getStaticTeamsData = (): ProcessedTeam[] => [
   {
     id: 1,
     name: 'Thunder Giants',
-    logo: 'https://s.yimg.com/cv/apiv2/default/nba/nba_4_p.png',
+    logo: '',
     wins: 8,
     losses: 2,
     ties: 0,
@@ -109,33 +68,40 @@ export const getStaticTeamsData = (): ProcessedTeam[] => [
     clinched_playoff: true,
     waiver: '18',
     lastweek: '-',
-  },
-  {
-    id: 2,
-    name: 'Phoenix Flyers',
-    logo: 'https://s.yimg.com/cv/apiv2/default/nba/nba_4_p.png',
-    wins: 7,
-    losses: 3,
-    ties: 0,
-    pct: '.700',
-    gb: '1.0',
-    rank: 2,
-    clinched_playoff: true,
-    waiver: '15',
-    lastweek: '+1',
-  },
-  {
-    id: 3,
-    name: 'Royal Wolves',
-    logo: 'https://s.yimg.com/cv/apiv2/default/nba/nba_4_p.png',
-    wins: 6,
-    losses: 4,
-    ties: 0,
-    pct: '.600',
-    gb: '2.0',
-    rank: 3,
-    clinched_playoff: false,
-    waiver: '12',
-    lastweek: '-1',
   }
 ];
+
+// ===== BLOG POST SCRAPER (NOVO!) =====
+export const fetchBlogPosts = async (): Promise<BlogPost[]> => {
+  if (blogCache && Date.now() - blogCache.timestamp < CACHE_DURATION) {
+    console.log('📰 Vraćam keširane blog postove');
+    return blogCache.data;
+  }
+
+  try {
+    const res = await fetch(API_URL, {
+      headers: { 'X-Api-Key': API_KEY, 'Content-Type': 'application/json' },
+    });
+    const data = await res.json();
+
+    const posts: BlogPost[] = data
+      .filter(item => item.naslov && item.tekst)
+      .map((item, index) => ({
+        id: `${index + 1}`,
+        naslov: item.naslov,
+        datum: item.datum,
+        tekst: item.tekst,
+        slika: item.slika,
+        slug: item.slug,
+        autor: item.autor,
+        category: item.category?.trim().toLowerCase() || 'uncategorized',
+      }));
+
+    blogCache = { data: posts, timestamp: Date.now() };
+    return posts;
+
+  } catch (err) {
+    console.error('❌ Greška pri učitavanju blogova:', err);
+    return [];
+  }
+};
