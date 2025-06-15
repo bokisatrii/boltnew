@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, Calendar, User } from "lucide-react";
 import AnimatedSection from "../components/ui/AnimatedSection";
 import { BlogPost } from "../types";
-import { fetchBlogPosts } from "../services/sheetbestApi";
+import { blogAPI } from '../services/blogAPI';
 
 // 🔧 Funkcija za renderovanje teksta sa umetnutim slikama
 const renderContent = (tekst: string) => {
@@ -33,12 +33,12 @@ const NewsDetail = () => {
   const [vest, setVest] = useState<BlogPost | null>(null);
 
   useEffect(() => {
-    fetchBlogPosts().then((data) => {
-      setVesti(data);
-      const found = data.find((v) => v.slug === slug);
-      setVest(found || null);
-    });
-  }, [slug]);
+  blogAPI.fetchBlogPosts().then((data) => {
+    setVesti(data);
+    const found = data.find((v) => v.slug === slug);
+    setVest(found || null);
+  });
+}, [slug]);
 
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
