@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BlogPost, blogAPI } from '../services/blogApi';
+import { BlogPost, blogAPI } from '../services/blogApi'; // Make sure this path matches your actual file
 
 export function useBlogPosts() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -56,7 +56,8 @@ export function useBlogPost(slug: string) {
       try {
         setLoading(true);
         setError(null);
-        const fetchedPost = await BlogAPI.getBlogPostBySlug(slug);
+        // FIXED: Changed from BlogAPI to blogAPI (the instance, not the class)
+        const fetchedPost = await blogAPI.getBlogPostBySlug(slug);
         setPost(fetchedPost);
         
         if (!fetchedPost) {
