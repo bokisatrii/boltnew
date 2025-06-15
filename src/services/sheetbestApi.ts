@@ -26,23 +26,11 @@ export const fetchYahooFantasyData = async (): Promise<ProcessedTeam[]> => {
     const res = await fetch(TEAM_API_URL, {
       headers: { 'X-Api-Key': API_KEY, 'Content-Type': 'application/json' },
     });
-    
-    if (!res.ok) {
-      console.warn(`⚠️ API poziv neuspešan (${res.status}): ${res.statusText}`);
-      return getStaticTeamsData();
-    }
-    
     const rawData = await res.json();
-    
-    // Check if API returned an error message (like trial expired)
-    if (rawData && typeof rawData === 'object' && rawData.detail) {
-      console.warn('⚠️ Sheet.Best API greška:', rawData.detail);
-      return getStaticTeamsData();
-    }
     
     // Validate that we received an array
     if (!Array.isArray(rawData)) {
-      console.warn('⚠️ API nije vratio niz za timove, koristim statičke podatke');
+      console.error('❌ API nije vratio niz za timove:', rawData);
       return getStaticTeamsData();
     }
     
@@ -70,7 +58,7 @@ export const fetchYahooFantasyData = async (): Promise<ProcessedTeam[]> => {
     return teams;
 
   } catch (err) {
-    console.warn('⚠️ Greška kod timova, koristim statičke podatke:', err);
+    console.error('❌ Greška kod timova:', err);
     return getStaticTeamsData();
   }
 };
@@ -103,23 +91,11 @@ export const fetchBlogPosts = async (): Promise<BlogPost[]> => {
     const res = await fetch(BLOG_API_URL, {
       headers: { 'X-Api-Key': API_KEY, 'Content-Type': 'application/json' },
     });
-
-    if (!res.ok) {
-      console.warn(`⚠️ Blog API poziv neuspešan (${res.status}): ${res.statusText}`);
-      return [];
-    }
-
     const data = await res.json();
-
-    // Check if API returned an error message (like trial expired)
-    if (data && typeof data === 'object' && data.detail) {
-      console.warn('⚠️ Sheet.Best Blog API greška:', data.detail);
-      return [];
-    }
 
     // Validate that we received an array
     if (!Array.isArray(data)) {
-      console.warn('⚠️ Blog API nije vratio niz, vraćam prazan niz');
+      console.error('❌ API nije vratio niz za blog postove:', data);
       return [];
     }
 
@@ -140,7 +116,7 @@ export const fetchBlogPosts = async (): Promise<BlogPost[]> => {
     return posts;
 
   } catch (err) {
-    console.warn('⚠️ Greška pri učitavanju blogova:', err);
+    console.error('❌ Greška pri učitavanju blogova:', err);
     return [];
   }
 };

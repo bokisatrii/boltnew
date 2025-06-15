@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import NewsGrid from '../components/news/NewsGrid';
 import AnimatedSection from '../components/ui/AnimatedSection';
-import { blogAPI, BlogPost } from '../services/blogAPI';
+import { fetchBlogPosts } from '../services/sheetbestApi';
+import { BlogPost } from '../types';
 
 const News: React.FC = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -9,10 +10,10 @@ const News: React.FC = () => {
 
   useEffect(() => {
     document.title = 'BasketLiga - Vesti';
-    blogAPI.fetchBlogPosts().then(setPosts);
+    fetchBlogPosts().then(setPosts);
   }, []);
 
-  const filtered = filter === 'sve' ? posts : posts.filter(p => p.category.toLowerCase() === filter);
+  const filtered = filter === 'sve' ? posts : posts.filter(p => p.category === filter);
 
   return (
     <div className="pt-24 pb-16">
@@ -24,6 +25,7 @@ const News: React.FC = () => {
           </p>
         </AnimatedSection>
 
+        {/* Filter dugmići */}
         <div className="flex flex-wrap justify-center gap-4 mb-8">
           {['sve', 'nba', 'europe', 'ncaa', 'fantasy'].map((cat) => (
             <button
