@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight, Calendar } from 'lucide-react';
 import AnimatedSection from '../ui/AnimatedSection';
-import { BlogAPI } from '../../services/blogApi';
+import { blogAPI } from '../../services/blogApi'; // Changed from BlogAPI to blogAPI
 import { BlogPost } from '../../types/blog';
 
 const LatestNews: React.FC = () => {
@@ -14,7 +14,7 @@ const LatestNews: React.FC = () => {
     async function loadLatestNews() {
       try {
         setLoading(true);
-        const posts = await BlogAPI.fetchBlogPosts();
+        const posts = await blogAPI.fetchBlogPosts(); // Changed from BlogAPI to blogAPI
         
         if (posts.length > 0) {
           // Sort by date
