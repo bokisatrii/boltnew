@@ -143,17 +143,17 @@ const Header: React.FC = () => {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
                   transition={{ duration: 0.15, ease: "easeOut" }}
-                  className="absolute left-0 mt-1 bg-white/95 backdrop-blur-sm shadow-lg rounded-lg border border-gray-100 overflow-hidden min-w-[140px] z-20"
+                  className="absolute left-0 mt-1 bg-white/50 backdrop-blur-md shadow-xl rounded-2xl border border-white/30 overflow-hidden min-w-[140px] z-20"
                 >
                   <Link 
                     to="/fantasy-news" 
-                    className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-150 text-sm font-medium"
+                    className="block px-4 py-3 text-gray-800 hover:bg-white/30 hover:text-blue-700 transition-colors duration-150 text-sm font-medium"
                   >
                     Vesti
                   </Link>
                   <Link 
                     to="/league" 
-                    className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-150 text-sm font-medium border-t border-gray-100"
+                    className="block px-4 py-3 text-gray-800 hover:bg-white/30 hover:text-blue-700 transition-colors duration-150 text-sm font-medium border-t border-white/20"
                   >
                     Tabela
                   </Link>
