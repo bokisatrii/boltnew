@@ -38,18 +38,25 @@ export const fetchYahooFantasyData = async (): Promise<ProcessedTeam[]> => {
 
     console.log('🌐 Učitavam podatke sa Google Apps Script API-ja...');
     
-    // Dodaj timestamp za cache busting
-    const urlWithTimestamp = `${GOOGLE_APPS_SCRIPT_URL}?t=${Date.now()}`;
-    
-    const response = await fetch(urlWithTimestamp, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      // Dodaj cache control za svežije podatke
-      cache: 'no-cache'
-    });
+    // Pokušaj prvo sa običnim fetch
+    let response;
+    try {
+      // Dodaj timestamp za cache busting
+      const urlWithTimestamp = `${GOOGLE_APPS_SCRIPT_URL}?t=${Date.now()}`;
+      
+      response = await fetch(urlWithTimestamp, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+        },
+        mode: 'cors', // Eksplicitno specificiraći CORS
+        cache: 'no-cache'
+      });
+    } catch (corsError) {
+      console.log('⚠️ CORS greška, pokušavam sa alternative pristupa...');
+      // Ako fetch ne radi zbog CORS-a, koristi proxy ili alternative
+      return await fetchWithProxy();
+    }
 
     if (!response.ok) {
       throw new Error(`❌ HTTP greška: ${response.status} ${response.statusText}`);
@@ -168,4 +175,37 @@ export const getStaticTeamsData = (): ProcessedTeam[] => [
 export const clearCache = (): void => {
   cache = null;
   console.log('🗑️ Keš je obrisan');
+};
+
+// Alternative fetch method za CORS probleme
+const fetchWithProxy = async (): Promise<ProcessedTeam[]> => {
+  try {
+    console.log('🔄 Pokušavam alternative pristup...');
+    
+    // Koristi proxy servise za CORS (samo za development)
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(GOOGLE_APPS_SCRIPT_URL)}`;
+    
+    const response = await fetch(proxyUrl);
+    if (!response.ok) {
+      throw new Error(`Proxy error: ${response.status}`);
+    }
+    
+    const proxyData = await response.json();
+    const apiResponse: GoogleAppsScriptResponse = JSON.parse(proxyData.contents);
+    
+    if (!apiResponse.success || !Array.isArray(apiResponse.data)) {
+      throw new Error('Invalid proxy response');
+    }
+    
+    const processed = transformYahooData(apiResponse.data);
+    console.log(`✅ Učitano ${processed.length} timova preko proxy-ja`);
+    
+    // 🧠 Sačuvaj u keš
+    cache = { data: processed, timestamp: Date.now() };
+    return processed;
+    
+  } catch (proxyError) {
+    console.error('❌ Proxy pristup takođe neuspešan:', proxyError);
+    throw proxyError;
+  }
 };
