@@ -143,7 +143,7 @@ const Header: React.FC = () => {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
                   transition={{ duration: 0.15, ease: "easeOut" }}
-                  className="absolute left-0 mt-1 bg-white/80 backdrop-blur-md shadow-lg rounded-2xl border border-white/30 overflow-hidden min-w-[140px] z-20"
+                  className="absolute left-0 mt-1 bg-white/80 backdrop-blur-md shadow-xl rounded-2xl border border-white/30 overflow-hidden min-w-[140px] z-20"
                 >
                   <Link 
                     to="/fantasy-news" 
