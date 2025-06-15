@@ -56,7 +56,7 @@ export function useBlogPost(slug: string) {
       try {
         setLoading(true);
         setError(null);
-        // FIXED: Changed from BlogAPI to blogAPI (the instance, not the class)
+        // FIXED Changed from BlogAPI to blogAPI (the instance, not the class)
         const fetchedPost = await blogAPI.getBlogPostBySlug(slug);
         setPost(fetchedPost);
         
