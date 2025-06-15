@@ -1,6 +1,8 @@
 import { YahooFantasyTeam, ProcessedTeam, BlogPost } from '../types';
 
-const API_URL = 'https://api.sheetbest.com/sheets/8576367a-3317-4c4b-b799-743de993d677';
+// SheetBest API ključevi i adrese
+const TEAM_API_URL = 'https://api.sheetbest.com/sheets/8576367a-3317-4c4b-b799-743de993d677';
+const BLOG_API_URL = 'https://api.sheetbest.com/sheets/41a008b3-7e1b-4c04-9451-d11906ded880';
 const API_KEY = 'zerX4Q2@u!d5iII2!m56HuRwLon40HwqKAsA8cR1Xx3YaxNC56lsqVnxa66pY7eH';
 
 const CACHE_DURATION = 5 * 60 * 1000;
@@ -13,7 +15,7 @@ interface CacheEntry<T> {
 let teamCache: CacheEntry<ProcessedTeam> | null = null;
 let blogCache: CacheEntry<BlogPost> | null = null;
 
-// ===== TEAM DATA SCRAPER (isti kao ranije) =====
+// ===== TEAM DATA SCRAPER =====
 export const fetchYahooFantasyData = async (): Promise<ProcessedTeam[]> => {
   if (teamCache && Date.now() - teamCache.timestamp < CACHE_DURATION) {
     console.log('📦 Vraćam keširane timove');
@@ -21,7 +23,7 @@ export const fetchYahooFantasyData = async (): Promise<ProcessedTeam[]> => {
   }
 
   try {
-    const res = await fetch(API_URL, {
+    const res = await fetch(TEAM_API_URL, {
       headers: { 'X-Api-Key': API_KEY, 'Content-Type': 'application/json' },
     });
     const rawData: YahooFantasyTeam[] = await res.json();
@@ -79,7 +81,7 @@ export const fetchBlogPosts = async (): Promise<BlogPost[]> => {
   }
 
   try {
-    const res = await fetch(API_URL, {
+    const res = await fetch(BLOG_API_URL, {
       headers: { 'X-Api-Key': API_KEY, 'Content-Type': 'application/json' },
     });
     const data = await res.json();
