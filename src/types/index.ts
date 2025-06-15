@@ -78,14 +78,3 @@ export interface StatCounter {
   icon: string;
   duration: number;
 }
-
-export interface BlogPost {
-  id: string;
-  naslov: string;
-  datum: string;
-  tekst: string;
-  slika: string;
-  slug: string;
-  autor: string;
-  category?: string; // Dodato za filtriranje po tipu (nba, ncaa, etc)
-}
