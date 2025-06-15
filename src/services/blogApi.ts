@@ -1,8 +1,6 @@
-// src/services/blogApi.ts - ISPRAVLJENA VERZIJA
-
+// src/services/blogApi.ts - VERZIJA SA CACHING-OM
 const ORIGINAL_API_URL = 'https://script.google.com/macros/s/AKfycbxjHgFozJT6Uo8gK4jd-YL2wFLohKsu2pwzCsJ0N0KVCGrb6FR5mgwgYK5eD8HHpeNaDA/exec';
 
-// Alternativni CORS proxy servisi (probajte jedan po jedan)
 const CORS_PROXIES = [
   'https://api.allorigins.win/raw?url=',
   'https://corsproxy.io/?',
@@ -10,7 +8,6 @@ const CORS_PROXIES = [
   'https://api.codetabs.com/v1/proxy?quest='
 ];
 
-// Koristimo prvi proxy
 const CORS_PROXY = CORS_PROXIES[0];
 const API_URL = CORS_PROXY + encodeURIComponent(ORIGINAL_API_URL);
 
@@ -35,8 +32,18 @@ interface APIResponse {
 
 export class BlogAPI {
   private apiUrl = API_URL;
+  private cache: BlogPost[] | null = null;
+  private cacheTimestamp: number = 0;
+  private cacheTimeout = 5 * 60 * 1000; // 5 minuta cache
   
   async fetchBlogPosts(): Promise<BlogPost[]> {
+    // Proverava cache
+    const now = Date.now();
+    if (this.cache && (now - this.cacheTimestamp) < this.cacheTimeout) {
+      console.log('📦 Using cached blog posts');
+      return this.cache;
+    }
+
     try {
       console.log('🔄 Fetching blog posts from:', this.apiUrl);
       
@@ -58,12 +65,22 @@ export class BlogAPI {
         throw new Error(result.error || 'API greška');
       }
       
-      return result.data || [];
+      // Čuva u cache
+      this.cache = result.data || [];
+      this.cacheTimestamp = now;
+      
+      return this.cache;
       
     } catch (error) {
       console.error('❌ Error fetching blog posts:', error);
       
-      // Fallback - vraćamo mock podatke ako API ne radi
+      // Ako imamo stari cache, koristi ga
+      if (this.cache) {
+        console.log('📦 Using stale cache due to error');
+        return this.cache;
+      }
+      
+      // Inače vraća mock podatke
       return this.getMockData();
     }
   }
@@ -112,6 +129,12 @@ export class BlogAPI {
     return posts
       .sort((a, b) => new Date(b.datum).getTime() - new Date(a.datum).getTime())
       .slice(0, limit);
+  }
+
+  // Metoda za brisanje cache-a
+  clearCache(): void {
+    this.cache = null;
+    this.cacheTimestamp = 0;
   }
 }
 
