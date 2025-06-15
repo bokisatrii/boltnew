@@ -7,21 +7,36 @@ export function useBlogPosts() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let isCancelled = false;
+
     async function loadPosts() {
       try {
         setLoading(true);
         setError(null);
         const fetchedPosts = await blogAPI.fetchBlogPosts();
-        setPosts(fetchedPosts);
+        
+        // Prevent setting state if component was unmounted
+        if (!isCancelled) {
+          setPosts(fetchedPosts);
+        }
       } catch (e) {
-        console.error('Error loading blog posts:', e);
-        setError('Greška pri učitavanju vesti');
+        if (!isCancelled) {
+          console.error('Error loading blog posts:', e);
+          setError('Greška pri učitavanju vesti');
+        }
       } finally {
-        setLoading(false);
+        if (!isCancelled) {
+          setLoading(false);
+        }
       }
     }
 
     loadPosts();
+
+    // Cleanup function
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
   const refetch = async () => {
@@ -47,6 +62,8 @@ export function useBlogPost(slug: string) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let isCancelled = false;
+
     async function loadPost() {
       if (!slug) {
         setLoading(false);
@@ -56,22 +73,33 @@ export function useBlogPost(slug: string) {
       try {
         setLoading(true);
         setError(null);
-        // FIXED Changed from BlogAPI to blogAPI (the instance, not the class)
         const fetchedPost = await blogAPI.getBlogPostBySlug(slug);
-        setPost(fetchedPost);
         
-        if (!fetchedPost) {
-          setError('Članak nije pronađen');
+        if (!isCancelled) {
+          setPost(fetchedPost);
+          
+          if (!fetchedPost) {
+            setError('Članak nije pronađen');
+          }
         }
       } catch (e) {
-        console.error('Error loading blog post:', e);
-        setError('Greška pri učitavanju članka');
+        if (!isCancelled) {
+          console.error('Error loading blog post:', e);
+          setError('Greška pri učitavanju članka');
+        }
       } finally {
-        setLoading(false);
+        if (!isCancelled) {
+          setLoading(false);
+        }
       }
     }
 
     loadPost();
+
+    // Cleanup function
+    return () => {
+      isCancelled = true;
+    };
   }, [slug]);
 
   return { post, loading, error };
@@ -83,23 +111,37 @@ export function useBlogPostsByCategory(category: string) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let isCancelled = false;
+
     async function loadPostsByCategory() {
       try {
         setLoading(true);
         setError(null);
         const fetchedPosts = await blogAPI.getBlogPostsByCategory(category);
-        setPosts(fetchedPosts);
+        
+        if (!isCancelled) {
+          setPosts(fetchedPosts);
+        }
       } catch (e) {
-        console.error('Error loading posts by category:', e);
-        setError('Greška pri učitavanju vesti');
+        if (!isCancelled) {
+          console.error('Error loading posts by category:', e);
+          setError('Greška pri učitavanju vesti');
+        }
       } finally {
-        setLoading(false);
+        if (!isCancelled) {
+          setLoading(false);
+        }
       }
     }
 
     if (category) {
       loadPostsByCategory();
     }
+
+    // Cleanup function
+    return () => {
+      isCancelled = true;
+    };
   }, [category]);
 
   return { posts, loading, error };
