@@ -1,17 +1,11 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Calendar, User, ChevronRight } from "lucide-react";
+import { ArrowLeft, Calendar, User } from "lucide-react";
 import AnimatedSection from "../components/ui/AnimatedSection";
+import { BlogPost } from "../types";
+import { fetchBlogPosts } from "../services/sheetbestApi";
 
-type Vest = {
-  naslov: string;
-  datum: string;
-  tekst: string;
-  slika?: string;
-  slug?: string;
-  autor?: string;
-};
-
+// 🔧 Funkcija za renderovanje teksta sa umetnutim slikama
 const renderContent = (tekst: string) => {
   const parts = tekst.split(/<<IMG:(.*?)>>/g);
   return parts.map((part, i) => {
@@ -35,17 +29,15 @@ const renderContent = (tekst: string) => {
 
 const NewsDetail = () => {
   const { slug } = useParams();
-  const [vesti, setVesti] = useState<Vest[]>([]);
-  const [vest, setVest] = useState<Vest | null>(null);
+  const [vesti, setVesti] = useState<BlogPost[]>([]);
+  const [vest, setVest] = useState<BlogPost | null>(null);
 
   useEffect(() => {
-    fetch("https://api.sheetbest.com/sheets/41a008b3-7e1b-4c04-9451-d11906ded880")
-      .then((res) => res.json())
-      .then((data: Vest[]) => {
-        setVesti(data);
-        const found = data.find((v) => v.slug === slug);
-        setVest(found || null);
-      });
+    fetchBlogPosts().then((data) => {
+      setVesti(data);
+      const found = data.find((v) => v.slug === slug);
+      setVest(found || null);
+    });
   }, [slug]);
 
   const formatDate = (dateString: string) => {
@@ -81,6 +73,7 @@ const NewsDetail = () => {
     <div className="pt-24 pb-16">
       <div className="container">
         <AnimatedSection>
+          {/* Povratni link */}
           <div className="mb-6">
             <Link
               to="/news"
@@ -91,6 +84,7 @@ const NewsDetail = () => {
             </Link>
           </div>
 
+          {/* Detalji vesti */}
           <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             <div className="relative h-64 sm:h-96 overflow-hidden">
               <img
@@ -125,6 +119,7 @@ const NewsDetail = () => {
           </div>
         </AnimatedSection>
 
+        {/* Preporučene vesti */}
         {vesti.length > 1 && (
           <div className="mt-12">
             <h3 className="text-2xl font-bold text-gray-800 mb-6">
