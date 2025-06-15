@@ -2,39 +2,29 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight, Calendar } from 'lucide-react';
 import AnimatedSection from '../ui/AnimatedSection';
-
-type Vest = {
-  naslov: string;
-  datum: string;
-  tekst: string;
-  slika?: string;
-  autor?: string;
-  slug?: string;
-  featured?: boolean;
-};
+import { fetchBlogPosts } from '../../services/sheetbestApi';
+import { BlogPost } from '../../types';
 
 const LatestNews: React.FC = () => {
-  const [vesti, setVesti] = useState<Vest[]>([]);
-  const [featuredArticle, setFeaturedArticle] = useState<Vest | null>(null);
-  const [recentArticles, setRecentArticles] = useState<Vest[]>([]);
+  const [vesti, setVesti] = useState<BlogPost[]>([]);
+  const [featuredArticle, setFeaturedArticle] = useState<BlogPost | null>(null);
+  const [recentArticles, setRecentArticles] = useState<BlogPost[]>([]);
 
   useEffect(() => {
-    fetch("https://api.sheetbest.com/sheets/41a008b3-7e1b-4c04-9451-d11906ded880")
-      .then((res) => res.json())
-      .then((data: Vest[]) => {
-        // Sort by date
-        const sortedData = data.sort((a, b) => {
-          return new Date(b.datum).getTime() - new Date(a.datum).getTime();
-        });
-        
-        // Find featured article (first one)
-        setFeaturedArticle(sortedData[0]);
-        
-        // Get next 3 articles for recent news
-        setRecentArticles(sortedData.slice(1, 4));
-        
-        setVesti(sortedData);
+    fetchBlogPosts().then((data: BlogPost[]) => {
+      // Sort by date
+      const sortedData = data.sort((a, b) => {
+        return new Date(b.datum).getTime() - new Date(a.datum).getTime();
       });
+      
+      // Find featured article (first one)
+      setFeaturedArticle(sortedData[0]);
+      
+      // Get next 3 articles for recent news
+      setRecentArticles(sortedData.slice(1, 4));
+      
+      setVesti(sortedData);
+    });
   }, []);
 
   const formatDate = (dateString: string) => {

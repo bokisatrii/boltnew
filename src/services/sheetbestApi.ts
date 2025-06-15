@@ -3,7 +3,7 @@ import { YahooFantasyTeam, ProcessedTeam, BlogPost } from '../types';
 // SheetBest API ključevi i adrese
 const TEAM_API_URL = 'https://api.sheetbest.com/sheets/8576367a-3317-4c4b-b799-743de993d677';
 const BLOG_API_URL = 'https://api.sheetbest.com/sheets/41a008b3-7e1b-4c04-9451-d11906ded880';
-const API_KEY = 'zerX4Q2@u!d5iII2!m56HuRwLon40HwqKAsA8cR1Xx3YaxNC56lsqVnxa66pY7eH';
+const API_KEY = import.meta.env.VITE_SHEETBEST_API_KEY;
 
 const CACHE_DURATION = 5 * 60 * 1000;
 
@@ -26,7 +26,14 @@ export const fetchYahooFantasyData = async (): Promise<ProcessedTeam[]> => {
     const res = await fetch(TEAM_API_URL, {
       headers: { 'X-Api-Key': API_KEY, 'Content-Type': 'application/json' },
     });
-    const rawData: YahooFantasyTeam[] = await res.json();
+    const rawData = await res.json();
+    
+    // Validate that we received an array
+    if (!Array.isArray(rawData)) {
+      console.error('❌ API nije vratio niz za timove:', rawData);
+      return getStaticTeamsData();
+    }
+    
     const valid = rawData.filter(team => team?.team && team?.wlt !== '0-0-0');
     const teams = valid.map((team, i) => {
       const [w, l, t] = team.wlt.split('-').map(Number);
@@ -85,6 +92,12 @@ export const fetchBlogPosts = async (): Promise<BlogPost[]> => {
       headers: { 'X-Api-Key': API_KEY, 'Content-Type': 'application/json' },
     });
     const data = await res.json();
+
+    // Validate that we received an array
+    if (!Array.isArray(data)) {
+      console.error('❌ API nije vratio niz za blog postove:', data);
+      return [];
+    }
 
     const posts: BlogPost[] = data
       .filter(item => item.naslov && item.tekst)

@@ -1,29 +1,19 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AnimatedSection from "../ui/AnimatedSection";
-
-type Vest = {
-  naslov: string;
-  datum: string;
-  tekst: string;
-  slika?: string;
-  autor?: string;
-  slug?: string;
-  featured?: boolean;
-};
+import { fetchBlogPosts } from "../../services/sheetbestApi";
+import { BlogPost } from "../../types";
 
 const NewsGrid = () => {
-  const [vesti, setVesti] = useState<Vest[]>([]);
+  const [vesti, setVesti] = useState<BlogPost[]>([]);
 
   useEffect(() => {
-    fetch("https://api.sheetbest.com/sheets/41a008b3-7e1b-4c04-9451-d11906ded880")
-      .then((res) => res.json())
-      .then((data) => {
-        const sortirano = data.sort((a: Vest, b: Vest) => {
-          return new Date(b.datum).getTime() - new Date(a.datum).getTime();
-        });
-        setVesti(sortirano);
+    fetchBlogPosts().then((data: BlogPost[]) => {
+      const sortirano = data.sort((a, b) => {
+        return new Date(b.datum).getTime() - new Date(a.datum).getTime();
       });
+      setVesti(sortirano);
+    });
   }, []);
 
   const formatDate = (dateString: string) => {
@@ -49,7 +39,7 @@ const NewsGrid = () => {
                   alt={article.naslov}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                {article.featured && (
+                {article.category === 'featured' && (
                   <div className="absolute top-3 left-3">
                     <span className="bg-orange-500 text-white px-3 py-1 text-xs font-medium rounded-full">
                       Istaknuto
