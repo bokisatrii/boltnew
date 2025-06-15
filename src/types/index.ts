@@ -80,7 +80,7 @@ export interface StatCounter {
 }
 
 export interface BlogPost {
-  id: string;
+  id?: string;
   naslov: string;
   datum: string;
   tekst: string;
