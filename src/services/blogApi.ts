@@ -2,6 +2,7 @@ import { BlogPost, BlogApiResponse } from '../types/blog';
 
 const API_URL = 'https://script.google.com/macros/s/AKfycbxjHgFozJT6Uo8gK4jd-YL2wFLohKsu2pwzCsJ0N0KVCGrb6FR5mgwgYK5eD8HHpeNaDA/exec';
 
+
 // Cache configuration
 interface CacheEntry {
   data: BlogPost[];
