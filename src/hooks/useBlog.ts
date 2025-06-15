@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BlogPost, BlogAPI } from '../services/blogApi';
+import { BlogPost, blogAPI } from '../services/blogApi';
 
 export function useBlogPosts() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -11,7 +11,7 @@ export function useBlogPosts() {
       try {
         setLoading(true);
         setError(null);
-        const fetchedPosts = await BlogAPI.fetchBlogPosts();
+        const fetchedPosts = await blogAPI.fetchBlogPosts();
         setPosts(fetchedPosts);
       } catch (e) {
         console.error('Error loading blog posts:', e);
@@ -28,7 +28,7 @@ export function useBlogPosts() {
     try {
       setLoading(true);
       setError(null);
-      const fetchedPosts = await BlogAPI.fetchBlogPosts();
+      const fetchedPosts = await blogAPI.fetchBlogPosts();
       setPosts(fetchedPosts);
     } catch (e) {
       console.error('Error refetching blog posts:', e);
@@ -86,7 +86,7 @@ export function useBlogPostsByCategory(category: string) {
       try {
         setLoading(true);
         setError(null);
-        const fetchedPosts = await BlogAPI.getBlogPostsByCategory(category);
+        const fetchedPosts = await blogAPI.getBlogPostsByCategory(category);
         setPosts(fetchedPosts);
       } catch (e) {
         console.error('Error loading posts by category:', e);
