@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);            // prati da li je skrolovano
   const [isMenuOpen, setIsMenuOpen] = useState(false);            // mobile menu toggle
+  const [isFantasyOpen, setIsFantasyOpen] = useState(false);      // fantasy dropdown toggle
   const location = useLocation();
 
   // Prati scroll da bi promenio stil navbara (npr. dodao senku)
@@ -27,6 +28,7 @@ const Header: React.FC = () => {
   // Zatvori meni kad se promeni ruta
   useEffect(() => {
     setIsMenuOpen(false);
+    setIsFantasyOpen(false);
   }, [location]);
 
   // Dodaj/ukloni body scroll i escape shortcut za mobilni meni
@@ -34,6 +36,9 @@ const Header: React.FC = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isMenuOpen) {
         setIsMenuOpen(false);
+      }
+      if (e.key === 'Escape' && isFantasyOpen) {
+        setIsFantasyOpen(false);
       }
     };
     if (isMenuOpen) {
@@ -46,7 +51,7 @@ const Header: React.FC = () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
     };
-  }, [isMenuOpen]);
+  }, [isMenuOpen, isFantasyOpen]);
 
   // Toggle menu function
   const toggleMenu = useCallback(() => {
@@ -55,6 +60,15 @@ const Header: React.FC = () => {
 
   // Pomocna funkcija da oboji aktivni link
   const isActive = (path: string) => location.pathname === path;
+
+  // Fantasy dropdown handlers
+  const handleFantasyMouseEnter = () => {
+    setIsFantasyOpen(true);
+  };
+
+  const handleFantasyMouseLeave = () => {
+    setIsFantasyOpen(false);
+  };
 
   return (
     <header 
@@ -105,18 +119,47 @@ const Header: React.FC = () => {
           ))}
 
           {/* Dropdown za "Fantasy" */}
-          <div className="relative group">
+          <div 
+            className="relative"
+            onMouseEnter={handleFantasyMouseEnter}
+            onMouseLeave={handleFantasyMouseLeave}
+          >
             <button
               className={`px-4 py-1.5 rounded-full transition-colors duration-200 ${
-                isScrolled ? 'text-gray-800 hover:bg-gray-100' : 'text-white hover:bg-white/20'
+                isFantasyOpen
+                  ? 'bg-blue-100 text-blue-700 font-semibold'
+                  : isScrolled
+                  ? 'text-gray-800 hover:bg-gray-100'
+                  : 'text-white hover:bg-white/20'
               }`}
             >
               Fantasy
             </button>
-            <div className="absolute left-0 mt-2 bg-white shadow-md rounded hidden group-hover:block z-10 min-w-[120px]">
-              <Link to="/fantasy-news" className="block px-4 py-2 hover:bg-gray-100">Vesti</Link>
-              <Link to="/league" className="block px-4 py-2 hover:bg-gray-100">Tabela</Link>
-            </div>
+            
+            <AnimatePresence>
+              {isFantasyOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                  transition={{ duration: 0.15, ease: "easeOut" }}
+                  className="absolute left-0 mt-1 bg-white/95 backdrop-blur-sm shadow-lg rounded-lg border border-gray-100 overflow-hidden min-w-[140px] z-20"
+                >
+                  <Link 
+                    to="/fantasy-news" 
+                    className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-150 text-sm font-medium"
+                  >
+                    Vesti
+                  </Link>
+                  <Link 
+                    to="/league" 
+                    className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-150 text-sm font-medium border-t border-gray-100"
+                  >
+                    Tabela
+                  </Link>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </nav>
 
