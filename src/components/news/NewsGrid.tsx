@@ -17,6 +17,21 @@ const NewsGrid: React.FC<NewsGridProps> = ({ articles }) => {
     return new Date(dateString).toLocaleDateString("sr-RS", options);
   };
 
+  const renderCategoryBadges = (categories: string[]) => {
+    return categories.map((cat, index) => (
+      <span 
+        key={index}
+        className={`inline-block px-2 py-1 text-xs font-medium rounded-full mr-1 mb-1 ${
+          cat === 'featured' 
+            ? 'bg-orange-500 text-white' 
+            : 'bg-blue-500 text-white'
+        }`}
+      >
+        {cat.toUpperCase()}
+      </span>
+    ));
+  };
+
   if (articles.length === 0) {
     return (
       <div className="text-center py-10">
@@ -36,20 +51,11 @@ const NewsGrid: React.FC<NewsGridProps> = ({ articles }) => {
                 alt={article.naslov}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              {article.category === 'featured' && (
-                <div className="absolute top-3 left-3">
-                  <span className="bg-orange-500 text-white px-3 py-1 text-xs font-medium rounded-full">
-                    Istaknuto
-                  </span>
+              <div className="absolute top-3 left-3">
+                <div className="flex flex-wrap">
+                  {renderCategoryBadges(article.category)}
                 </div>
-              )}
-              {article.category && article.category !== 'featured' && (
-                <div className="absolute top-3 right-3">
-                  <span className="bg-blue-500 text-white px-3 py-1 text-xs font-medium rounded-full">
-                    {article.category.toUpperCase()}
-                  </span>
-                </div>
-              )}
+              </div>
             </div>
             <div className="p-6 flex-1 flex flex-col">
               <div className="flex items-center text-gray-500 text-sm mb-3">

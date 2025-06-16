@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight, Calendar } from 'lucide-react';
 import AnimatedSection from '../ui/AnimatedSection';
-import { blogAPI } from '../../services/blogApi'; // Changed from BlogAPI to blogAPI
+import { blogAPI } from '../../services/blogApi';
 import { BlogPost } from '../../types/blog';
 
 const LatestNews: React.FC = () => {
@@ -14,7 +14,7 @@ const LatestNews: React.FC = () => {
     async function loadLatestNews() {
       try {
         setLoading(true);
-        const posts = await blogAPI.fetchBlogPosts(); // Changed from BlogAPI to blogAPI
+        const posts = await blogAPI.fetchBlogPosts();
         
         if (posts.length > 0) {
           // Sort by date
@@ -45,6 +45,21 @@ const LatestNews: React.FC = () => {
       day: 'numeric',
     };
     return new Date(dateString).toLocaleDateString('sr-RS', options);
+  };
+
+  const renderCategoryBadges = (categories: string[]) => {
+    return categories.map((cat, index) => (
+      <span 
+        key={index}
+        className={`inline-block px-3 py-1 text-xs font-medium rounded-full mr-2 mb-2 ${
+          cat === 'featured' 
+            ? 'bg-orange-500 text-white' 
+            : 'bg-blue-500 text-white'
+        }`}
+      >
+        {cat.toUpperCase()}
+      </span>
+    ));
   };
 
   if (loading) {
@@ -98,9 +113,9 @@ const LatestNews: React.FC = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                 <div className="absolute bottom-0 left-0 p-6">
-                  <span className="inline-block bg-orange-500 text-white px-3 py-1 text-xs font-medium rounded-full mb-2">
-                    Najnovije
-                  </span>
+                  <div className="mb-2">
+                    {renderCategoryBadges(featuredArticle.category)}
+                  </div>
                   <h3 className="text-xl sm:text-2xl font-bold text-white">{featuredArticle.naslov}</h3>
                 </div>
               </div>
@@ -146,6 +161,9 @@ const LatestNews: React.FC = () => {
                     <h3 className="text-lg font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
                       {article.naslov}
                     </h3>
+                    <div className="mb-2">
+                      {renderCategoryBadges(article.category)}
+                    </div>
                     <p className="text-gray-600 text-sm line-clamp-2">
                       {article.tekst?.slice(0, 100)}...
                     </p>

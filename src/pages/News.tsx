@@ -11,10 +11,12 @@ const News: React.FC = () => {
     document.title = 'BasketLiga - Vesti';
   }, []);
 
-  // Filter posts based on selected category
+  // Filter posts based on selected category - now supports multiple categories per post
   const filteredPosts = filter === 'sve' 
     ? posts 
-    : posts.filter(post => post.category?.toLowerCase() === filter.toLowerCase());
+    : posts.filter(post => 
+        post.category.some(cat => cat.toLowerCase().includes(filter.toLowerCase()))
+      );
 
   return (
     <div className="pt-24 pb-16">

@@ -1,4 +1,4 @@
-// src/services/blogApi.ts - VERZIJA SA CACHING-OM
+// src/services/blogApi.ts - VERZIJA SA CACHING-OM I MULTI-CATEGORY SUPPORT
 const ORIGINAL_API_URL = 'https://script.google.com/macros/s/AKfycbxjHgFozJT6Uo8gK4jd-YL2wFLohKsu2pwzCsJ0N0KVCGrb6FR5mgwgYK5eD8HHpeNaDA/exec';
 
 const CORS_PROXIES = [
@@ -11,24 +11,25 @@ const CORS_PROXIES = [
 const CORS_PROXY = CORS_PROXIES[0];
 const API_URL = CORS_PROXY + encodeURIComponent(ORIGINAL_API_URL);
 
-export interface BlogPost {
-  id: string;
-  naslov: string;
-  datum: string;
-  tekst: string;
-  slika: string;
-  slug: string;
-  autor: string;
-  category: string;
-}
+import { BlogPost, RawBlogPost } from '../types/blog';
 
 interface APIResponse {
   success: boolean;
-  data: BlogPost[];
+  data: RawBlogPost[];
   count: number;
   timestamp: string;
   error?: string;
 }
+
+// Function to process raw posts and convert comma-separated categories to arrays
+const processRawPosts = (rawPosts: RawBlogPost[]): BlogPost[] => {
+  return rawPosts.map(post => ({
+    ...post,
+    category: post.category 
+      ? post.category.split(',').map(cat => cat.trim().toLowerCase()).filter(cat => cat.length > 0)
+      : []
+  }));
+};
 
 export class BlogAPI {
   private apiUrl = API_URL;
@@ -65,8 +66,11 @@ export class BlogAPI {
         throw new Error(result.error || 'API greška');
       }
       
+      // Process raw posts to handle multi-categories
+      const processedPosts = processRawPosts(result.data || []);
+      
       // Čuva u cache
-      this.cache = result.data || [];
+      this.cache = processedPosts;
       this.cacheTimestamp = now;
       
       return this.cache;
@@ -87,7 +91,7 @@ export class BlogAPI {
   
   // Mock podaci za testiranje
   private getMockData(): BlogPost[] {
-    return [
+    const rawMockData: RawBlogPost[] = [
       {
         id: "1",
         naslov: "BasketLiga počinje!",
@@ -96,7 +100,7 @@ export class BlogAPI {
         slika: "https://www.rockstaracademy.com/lib/images/news/basketball.jpeg",
         slug: "utakmica-pod-reflektorima",
         autor: "Bogdan Terzic",
-        category: "fantasy"
+        category: "fantasy, youth"
       },
       {
         id: "2",
@@ -106,9 +110,11 @@ export class BlogAPI {
         slika: "https://i.postimg.cc/qRZ7rBJ4/nocnibasket.jpg",
         slug: "mvp-igrac-sezone",
         autor: "BasketLiga UO",
-        category: "ncaa"
+        category: "nba, ncaa, featured"
       }
     ];
+    
+    return processRawPosts(rawMockData);
   }
   
   async getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
@@ -118,8 +124,10 @@ export class BlogAPI {
   
   async getBlogPostsByCategory(category: string): Promise<BlogPost[]> {
     const posts = await this.fetchBlogPosts();
+    const searchCategory = category.toLowerCase();
+    
     return posts.filter(post => 
-      post.category.toLowerCase() === category.toLowerCase()
+      post.category.some(cat => cat.includes(searchCategory))
     );
   }
   

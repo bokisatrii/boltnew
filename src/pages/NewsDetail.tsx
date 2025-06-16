@@ -46,6 +46,21 @@ const NewsDetail = () => {
     return new Date(dateString).toLocaleDateString("sr-RS", options);
   };
 
+  const renderCategoryBadges = (categories: string[]) => {
+    return categories.map((cat, index) => (
+      <span 
+        key={index}
+        className={`inline-block px-3 py-1 text-sm font-medium rounded-full mr-2 mb-2 ${
+          cat === 'featured' 
+            ? 'bg-orange-500 text-white' 
+            : 'bg-blue-500 text-white'
+        }`}
+      >
+        {cat.toUpperCase()}
+      </span>
+    ));
+  };
+
   if (loading) {
     return (
       <div className="pt-24 pb-16 min-h-screen">
@@ -114,7 +129,7 @@ const NewsDetail = () => {
                 {post.naslov}
               </h1>
 
-              <div className="flex flex-wrap items-center text-gray-500 mb-8 gap-4">
+              <div className="flex flex-wrap items-center text-gray-500 mb-6 gap-4">
                 {post.autor && (
                   <div className="flex items-center">
                     <User size={18} className="mr-2 text-blue-500" />
@@ -125,11 +140,10 @@ const NewsDetail = () => {
                   <Calendar size={18} className="mr-2 text-blue-500" />
                   <span>{formatDate(post.datum)}</span>
                 </div>
-                {post.category && (
-                  <div className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
-                    {post.category.toUpperCase()}
-                  </div>
-                )}
+              </div>
+
+              <div className="mb-6">
+                {renderCategoryBadges(post.category)}
               </div>
 
               <div className="prose prose-lg max-w-none">
@@ -163,9 +177,23 @@ const NewsDetail = () => {
                       <h4 className="font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
                         {article.naslov}
                       </h4>
-                      <div className="flex items-center text-gray-500 text-sm">
+                      <div className="flex items-center text-gray-500 text-sm mb-2">
                         <Calendar size={14} className="mr-1" />
                         <span>{formatDate(article.datum)}</span>
+                      </div>
+                      <div className="mb-2">
+                        {article.category.slice(0, 2).map((cat, index) => (
+                          <span 
+                            key={index}
+                            className={`inline-block px-2 py-1 text-xs font-medium rounded-full mr-1 mb-1 ${
+                              cat === 'featured' 
+                                ? 'bg-orange-500 text-white' 
+                                : 'bg-blue-500 text-white'
+                            }`}
+                          >
+                            {cat.toUpperCase()}
+                          </span>
+                        ))}
                       </div>
                     </div>
                   </Link>
