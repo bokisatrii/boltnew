@@ -44,7 +44,7 @@ const NewsGrid: React.FC<NewsGridProps> = ({ articles }) => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {articles.map((article, index) => (
         <AnimatedSection key={article.id} delay={index * 0.1}>
-          <article className="card h-full flex flex-col group">
+          <Link to={`/news/${article.slug}`} className="card h-full flex flex-col group hover:shadow-lg transition-shadow duration-300">
             <div className="relative h-52 overflow-hidden">
               <img
                 src={article.slika}
@@ -73,30 +73,25 @@ const NewsGrid: React.FC<NewsGridProps> = ({ articles }) => {
               <p className="text-gray-600 mb-4 flex-1">
                 {article.tekst?.slice(0, 150)}...
               </p>
-              {article.slug && (
-                <Link
-                  to={`/news/${article.slug}`}
-                  className="text-blue-600 font-medium hover:text-blue-800 flex items-center mt-auto"
+              <span className="text-blue-600 font-medium hover:text-blue-800 flex items-center mt-auto">
+                Pročitaj više
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 ml-1"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
                 >
-                  Pročitaj više
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 ml-1"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </Link>
-              )}
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </span>
             </div>
-          </article>
+          </Link>
         </AnimatedSection>
       ))}
     </div>
