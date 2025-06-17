@@ -95,7 +95,7 @@ const Header: React.FC = () => {
         </Link>
 
         {/* Navigacija - desktop verzija */}
-        <nav className="hidden md:flex gap-2 items-center text-sm font-medium">
+        <nav className="hidden lg:flex gap-2 items-center text-sm font-medium">
           {[
             { name: 'Početna', path: '/' },
             { name: 'Vesti', path: '/news' },
