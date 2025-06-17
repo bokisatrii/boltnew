@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Home, Newspaper, Mic, Trophy, BarChart3 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Header: React.FC = () => {
@@ -99,9 +99,7 @@ const Header: React.FC = () => {
           {[
             { name: 'Početna', path: '/' },
             { name: 'Vesti', path: '/news' },
-            { name: 'NBA', path: '/nba' },
-            { name: 'Evropa', path: '/europe' },
-            { name: 'NCAA', path: '/ncaa' },
+            { name: 'Podcast', path: '/podcast' },
           ].map((link) => (
             <Link
               key={link.path}
@@ -218,20 +216,90 @@ const Header: React.FC = () => {
               role="navigation"
               aria-label="Mobilna navigacija"
             >
-              <div className="container py-6 flex flex-col space-y-4">
-                <Link to="/" className="text-gray-800 hover:text-blue-600 py-3 text-lg block">Početna</Link>
-                <Link to="/news" className="text-gray-800 hover:text-blue-600 py-3 text-lg block">Vesti</Link>
-                <Link to="/nba" className="text-gray-800 hover:text-blue-600 py-3 text-lg block">NBA</Link>
-                <Link to="/europe" className="text-gray-800 hover:text-blue-600 py-3 text-lg block">Evropa</Link>
-                <Link to="/ncaa" className="text-gray-800 hover:text-blue-600 py-3 text-lg block">NCAA</Link>
-                <Link to="/fantasy-news" className="text-gray-800 hover:text-blue-600 py-3 text-lg block">Fantasy Vesti</Link>
-                <Link to="/league" className="text-gray-800 hover:text-blue-600 py-3 text-lg block">Tabela</Link>
-                <Link 
-                  to="/register" 
-                  className="btn btn-primary text-center mt-4 w-full"
-                >
-                  Prijavi ekipu
-                </Link>
+              <div className="container py-6">
+                {/* Glavna navigacija */}
+                <div className="space-y-2 mb-6">
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-3">
+                    Navigacija
+                  </h3>
+                  
+                  <Link 
+                    to="/" 
+                    className={`flex items-center space-x-3 px-4 py-3 text-lg rounded-xl transition-all duration-200 ${
+                      isActive('/') 
+                        ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 font-semibold transform scale-105' 
+                        : 'text-gray-800 hover:bg-gray-50 hover:text-blue-600 hover:transform hover:scale-102'
+                    }`}
+                  >
+                    <Home size={20} />
+                    <span>Početna</span>
+                  </Link>
+                  
+                  <Link 
+                    to="/news" 
+                    className={`flex items-center space-x-3 px-4 py-3 text-lg rounded-xl transition-all duration-200 ${
+                      isActive('/news') 
+                        ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 font-semibold transform scale-105' 
+                        : 'text-gray-800 hover:bg-gray-50 hover:text-blue-600 hover:transform hover:scale-102'
+                    }`}
+                  >
+                    <Newspaper size={20} />
+                    <span>Vesti</span>
+                  </Link>
+                  
+                  <Link 
+                    to="/podcast" 
+                    className={`flex items-center space-x-3 px-4 py-3 text-lg rounded-xl transition-all duration-200 ${
+                      isActive('/podcast') 
+                        ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 font-semibold transform scale-105' 
+                        : 'text-gray-800 hover:bg-gray-50 hover:text-blue-600 hover:transform hover:scale-102'
+                    }`}
+                  >
+                    <Mic size={20} />
+                    <span>Podcast</span>
+                  </Link>
+                </div>
+
+                {/* Fantasy sekcija */}
+                <div className="space-y-2 mb-6">
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-3">
+                    Fantasy
+                  </h3>
+                  
+                  <Link 
+                    to="/fantasy-news" 
+                    className={`flex items-center space-x-3 px-4 py-3 text-lg rounded-xl transition-all duration-200 ${
+                      isActive('/fantasy-news') 
+                        ? 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 font-semibold transform scale-105' 
+                        : 'text-gray-800 hover:bg-purple-50 hover:text-purple-600 hover:transform hover:scale-102'
+                    }`}
+                  >
+                    <Trophy size={20} />
+                    <span>Fantasy Vesti</span>
+                  </Link>
+                  
+                  <Link 
+                    to="/league" 
+                    className={`flex items-center space-x-3 px-4 py-3 text-lg rounded-xl transition-all duration-200 ${
+                      isActive('/league') 
+                        ? 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 font-semibold transform scale-105' 
+                        : 'text-gray-800 hover:bg-purple-50 hover:text-purple-600 hover:transform hover:scale-102'
+                    }`}
+                  >
+                    <BarChart3 size={20} />
+                    <span>Tabela</span>
+                  </Link>
+                </div>
+
+                {/* CTA dugme */}
+                <div className="px-4">
+                  <Link 
+                    to="/register" 
+                    className="btn btn-primary text-center w-full py-4 text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                  >
+                    Prijavi ekipu
+                  </Link>
+                </div>
               </div>
             </motion.nav>
           </>
