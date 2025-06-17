@@ -100,7 +100,7 @@ const Header: React.FC = () => {
             { name: 'Početna', path: '/' },
             { name: 'Vesti', path: '/news' },
             { name: 'NBA', path: '/nba' },
-            { name: 'Evropa', path: '/europe' },
+            { name: 'Podcast', path: '/europe' },
             { name: 'NCAA', path: '/ncaa' },
           ].map((link) => (
             <Link
