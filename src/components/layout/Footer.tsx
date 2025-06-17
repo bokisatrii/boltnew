@@ -81,7 +81,7 @@ const Footer: React.FC = () => {
               </a>
             
                 <a
-  href="https://www.instagram.com/trojkaizcoska"
+  href="https://www.instagram.com/trojkaizcoska_"
   target="_blank"
   rel="noopener noreferrer"
   className="bg-pink-700 hover:bg-pink-600 transition-colors p-2 rounded-full"
@@ -89,7 +89,7 @@ const Footer: React.FC = () => {
                   
   <InstagramLogo size={20} />
 </a>
-              <a href="https://www.instagram.com/trojkaizcoska" className="bg-blue-500 hover:bg-blue-400 transition-colors p-2 rounded-full">
+              <a href="https://www.instagram.com/trojkaizcoska_" className="bg-blue-500 hover:bg-blue-400 transition-colors p-2 rounded-full">
                 <TwitterLogo size={20} />
               </a>
             </div>
