@@ -81,7 +81,7 @@ const Footer: React.FC = () => {
               </a>
             
                 <a
-  href="https://instagram.com"
+  href="https://www.instagram.com/trojkaizcoska"
   target="_blank"
   rel="noopener noreferrer"
   className="bg-pink-700 hover:bg-pink-600 transition-colors p-2 rounded-full"
