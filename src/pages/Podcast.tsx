@@ -208,7 +208,7 @@ const Podcast: React.FC = () => {
                       
                       {/* Spotify Embed Player - poboljšan */}
                       <div className="relative w-full mb-8">
-                        <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl ring-4 ring-[#CD853F]/20">
+                        <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl ring-4 ring-[#b0500c]/20">
                           <iframe
                             style={{ borderRadius: '16px' }}
                             src="https://open.spotify.com/embed/show/3bkhQToL2N4YJ5I2jSopfZ/video?utm_source=generator&theme=0"
