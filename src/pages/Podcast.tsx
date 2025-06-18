@@ -188,7 +188,7 @@ const Podcast: React.FC = () => {
                 </AnimatedSection>
 
                 <AnimatedSection>
-                  <div className="bg-gradient-to-br from-white/95 to-[#CD853F]/5 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border-2 border-[#CD853F]/20 max-w-5xl mx-auto">
+                  <div className="bg-gradient-to-br from-black/95 to-[#CD853F]/5 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border-2 border-[#CD853F]/20 max-w-5xl mx-auto">
                     <div className="p-6 md:p-10">
                       {/* Episode info header */}
                       <div className="flex flex-wrap items-center justify-center gap-4 mb-6">
