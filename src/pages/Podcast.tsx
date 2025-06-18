@@ -52,7 +52,7 @@ const Podcast: React.FC = () => {
             >
               {/* Naslov sa novom bojom */}
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-[#D2691E] drop-shadow-2xl">
-                🎙️ Trojka iz Ćoška
+                Trojka iz Ćoška
               </h1>
               
               {/* Podnaslov takođe u narandžastoj boji */}
