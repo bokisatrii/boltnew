@@ -20,7 +20,7 @@ const Podcast: React.FC = () => {
     <div className="pt-24 pb-16 min-h-screen">
       {/* Hero sekcija sa gradijentom */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1db954] via-[#1ed760] to-[#543d08]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#994005] via-[#1ed760] to-[#543d08]" />
         <div className="absolute inset-0 bg-black/10" />
         
         <div className="container relative z-10 py-16 md:py-24">
