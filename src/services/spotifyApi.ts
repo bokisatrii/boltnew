@@ -31,12 +31,12 @@ export const fetchSpotifyEpisodes = async (limit: number = 5): Promise<SpotifyEp
 const getMockEpisodes = (): SpotifyEpisode[] => [
   {
     id: 'mock-1',
-    name: 'Trojka iz Ćoška - Epizoda 1',
-    description: 'Dobrodošli u prvi podcast o košarci iz našeg kraja! U ovoj epizodi razgovaramo o najnovijim dešavanjima u NBA ligi, analiziramo performanse naših igrača i delimo naše prognoze za predstojeću sezonu.',
+    name: 'Derrick Rose - Bajka koja nije imala srećan kraj',
+    description: 'Momenat kada je 2012 D-Rose kleknuo posle polaganja jednostavno sam znao da je gotovo. Kao neko ko je prošao kroz istu povredu 3 godine ranije, još uvek mi je sve bilo sveže. Karijera koja je mogla da bude označena kao jedna od najboljih na toj poziciji...bajka bez srećnog kraja.',
     release_date: '2025-01-15',
     duration_ms: 3600000, // 1 sat
     external_urls: {
-      spotify: `https://open.spotify.com/episode/mock-1`,
+      spotify: `https://open.spotify.com/show/3bkhQToL2N4YJ5I2jSopfZ?si=68ac090cbb514b29`,
     },
     images: [
       {
