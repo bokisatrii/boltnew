@@ -198,7 +198,7 @@ const Podcast: React.FC = () => {
                         </div>
                         <div className="flex items-center gap-2 bg-[#CD853F]/10 px-4 py-2 rounded-full">
                           <Clock size={16} className="text-[#CD853F]" />
-                          <span className="text-[#8B4513] text-sm font-medium">~45 min</span>
+                          <span className="text-[#b0500c] text-sm font-medium">~45 min</span>
                         </div>
                       </div>
                       
