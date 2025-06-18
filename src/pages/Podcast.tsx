@@ -180,7 +180,7 @@ const Podcast: React.FC = () => {
               <section className="my-16">
                 <AnimatedSection className="text-center mb-12">
                   <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#D2691E] mb-4 drop-shadow-lg">
-                    🔥 Najnovija epizoda
+                     Najnovija epizoda 🔥
                   </h2>
                   <p className="text-xl md:text-2xl text-[#CD853F] max-w-3xl mx-auto leading-relaxed">
                     Slušajte najnoviju epizodu direktno ovde ili na vašoj omiljenoj platformi
