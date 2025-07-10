@@ -209,12 +209,31 @@ const Podcast: React.FC = () => {
             transition={{ delay: 0.4, duration: 0.6 }}
             className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl ring-4 ring-[#CD853F]/20 max-w-5xl mx-auto group hover:ring-[#D2691E]/30 transition-all duration-300"
           >
-            <IframeWithLoading
-              src="https://open.spotify.com/embed/show/3bkhQToL2N4YJ5I2jSopfZ/video?utm_source=generator&theme=0"
+            {/* Loading Skeleton - positioned behind iframe */}
+            {!spotifyLoaded && (
+              <div className="absolute inset-0 z-0">
+                <SkeletonLoader className="w-full h-full" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="flex items-center gap-2 text-[#CD853F]">
+                    <Loader2 className="w-6 h-6 animate-spin" />
+                    <span>Učitava se...</span>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Original Spotify iframe - maintains aspect ratio */}
+            <iframe
               title="Trojka iz Ćoška - Spotify Podcast Player"
+              src="https://open.spotify.com/embed/show/3bkhQToL2N4YJ5I2jSopfZ/video?utm_source=generator&theme=0"
+              width="100%"
+              height="100%"
+              frameBorder="0"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
               style={{ borderRadius: '16px' }}
-              lazy={false} // Main player loads immediately
               onLoad={() => setSpotifyLoaded(true)}
+              className="relative z-10"
             />
           </motion.div>
           
