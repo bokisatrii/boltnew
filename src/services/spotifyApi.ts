@@ -1,6 +1,7 @@
 // Spotify servis za podcast epizode - koristi mock podatke umesto API poziva
 
-/*
+// DEPRECATED - više se ne koristi jer koristimo Spotify embed + SociableKit
+
 export interface SpotifyEpisode {
   id: string;
   name: string;
