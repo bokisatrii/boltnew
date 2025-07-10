@@ -202,16 +202,19 @@ const Podcast: React.FC = () => {
             Slušajte najnovije epizode našeg podcasta direktno na sajtu!
           </motion.p>
           
-          {/* Spotify Player with Enhanced Loading */}
+          {/* Spotify Player - Opcija 1: Čist dizajn bez outline-a */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl ring-4 ring-[#CD853F]/20 max-w-5xl mx-auto group hover:ring-[#D2691E]/30 transition-all duration-300"
+            className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl max-w-5xl mx-auto group"
           >
-            {/* Loading Skeleton - positioned behind iframe */}
+            {/* Elegantna pozadina sa gradijentom */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#2D1810]/90 via-[#3D2420]/80 to-[#2D1810]/90 rounded-2xl"></div>
+            
+            {/* Loading Skeleton */}
             {!spotifyLoaded && (
-              <div className="absolute inset-0 z-0">
+              <div className="absolute inset-0 z-10">
                 <SkeletonLoader className="w-full h-full" />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="flex items-center gap-2 text-[#CD853F]">
@@ -222,7 +225,7 @@ const Podcast: React.FC = () => {
               </div>
             )}
             
-            {/* Original Spotify iframe - maintains aspect ratio */}
+            {/* Spotify iframe */}
             <iframe
               title="Trojka iz Ćoška - Spotify Podcast Player"
               src="https://open.spotify.com/embed/show/3bkhQToL2N4YJ5I2jSopfZ/video?utm_source=generator&theme=0"
@@ -233,9 +236,55 @@ const Podcast: React.FC = () => {
               loading="lazy"
               style={{ borderRadius: '16px' }}
               onLoad={() => setSpotifyLoaded(true)}
-              className="relative z-10"
+              className={`relative z-20 transition-all duration-500 ${
+                spotifyLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+              }`}
             />
+            
+            {/* Subtilni hover efekat - samo shadow */}
+            <div className="absolute inset-0 rounded-2xl transition-all duration-300 group-hover:shadow-[0_0_50px_rgba(210,105,30,0.3)] pointer-events-none"></div>
           </motion.div>
+          
+          {/* Alternativno - Opcija 2: Sa custom border */}
+          {/* 
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="relative max-w-5xl mx-auto group"
+          >
+            <div className="p-1 bg-gradient-to-r from-[#D2691E]/60 via-[#CD853F]/40 to-[#D2691E]/60 rounded-2xl">
+              <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl bg-[#2D1810]">
+                {!spotifyLoaded && (
+                  <div className="absolute inset-0 z-10">
+                    <SkeletonLoader className="w-full h-full" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="flex items-center gap-2 text-[#CD853F]">
+                        <Loader2 className="w-6 h-6 animate-spin" />
+                        <span>Učitava se...</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                <iframe
+                  title="Trojka iz Ćoška - Spotify Podcast Player"
+                  src="https://open.spotify.com/embed/show/3bkhQToL2N4YJ5I2jSopfZ/video?utm_source=generator&theme=0"
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                  loading="lazy"
+                  style={{ borderRadius: '16px' }}
+                  onLoad={() => setSpotifyLoaded(true)}
+                  className={`relative z-20 transition-all duration-500 ${
+                    spotifyLoaded ? 'opacity-100' : 'opacity-0'
+                  }`}
+                />
+              </div>
+            </div>
+          </motion.div>
+          */}
           
           {/* Enhanced Action Buttons */}
           <motion.div
@@ -300,7 +349,7 @@ const Podcast: React.FC = () => {
               title="Trojka iz Ćoška - Arhiva svih epizoda"
               height="1000"
               className="w-full"
-              lazy={true} // Archive loads when user scrolls
+              lazy={true}
               onLoad={() => setArchiveLoaded(true)}
             />
           </motion.div>
