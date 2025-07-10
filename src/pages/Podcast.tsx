@@ -246,7 +246,7 @@ const Podcast: React.FC = () => {
           </motion.div>
           
           {/* Alternativno - Opcija 2: Sa custom border */}
-          {/* 
+          {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -284,7 +284,7 @@ const Podcast: React.FC = () => {
               </div>
             </div>
           </motion.div>
-          */}
+          }
           
           {/* Enhanced Action Buttons */}
           <motion.div
