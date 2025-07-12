@@ -285,7 +285,7 @@ const Podcast: React.FC = () => {
             transition={{ delay: 0.2, duration: 0.6 }}
             className="text-[#CD853F] mb-6"
           >
-            Automatski prikaz preko Spotify widget-a (powered by SociableKIT)
+            Slušaj sve epizode ovde ili na Spotify
           </motion.p>
           
           {/* Responsive Archive Widget */}
