@@ -2,39 +2,40 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight, Calendar } from 'lucide-react';
 import AnimatedSection from '../ui/AnimatedSection';
-
-type Vest = {
-  naslov: string;
-  datum: string;
-  tekst: string;
-  slika?: string;
-  autor?: string;
-  slug?: string;
-  featured?: boolean;
-};
+import { blogAPI } from '../../services/blogApi';
+import { BlogPost } from '../../types/blog';
 
 const LatestNews: React.FC = () => {
-  const [vesti, setVesti] = useState<Vest[]>([]);
-  const [featuredArticle, setFeaturedArticle] = useState<Vest | null>(null);
-  const [recentArticles, setRecentArticles] = useState<Vest[]>([]);
+  const [featuredArticle, setFeaturedArticle] = useState<BlogPost | null>(null);
+  const [recentArticles, setRecentArticles] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("https://api.sheetbest.com/sheets/41a008b3-7e1b-4c04-9451-d11906ded880")
-      .then((res) => res.json())
-      .then((data: Vest[]) => {
-        // Sort by date
-        const sortedData = data.sort((a, b) => {
-          return new Date(b.datum).getTime() - new Date(a.datum).getTime();
-        });
+    async function loadLatestNews() {
+      try {
+        setLoading(true);
+        const posts = await blogAPI.fetchBlogPosts();
         
-        // Find featured article (first one)
-        setFeaturedArticle(sortedData[0]);
-        
-        // Get next 3 articles for recent news
-        setRecentArticles(sortedData.slice(1, 4));
-        
-        setVesti(sortedData);
-      });
+        if (posts.length > 0) {
+          // Sort by date
+          const sortedPosts = posts.sort((a, b) => {
+            return new Date(b.datum).getTime() - new Date(a.datum).getTime();
+          });
+          
+          // Set featured article (first one)
+          setFeaturedArticle(sortedPosts[0]);
+          
+          // Get next 3 articles for recent news
+          setRecentArticles(sortedPosts.slice(1, 4));
+        }
+      } catch (error) {
+        console.error('Error loading latest news:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadLatestNews();
   }, []);
 
   const formatDate = (dateString: string) => {
@@ -46,8 +47,48 @@ const LatestNews: React.FC = () => {
     return new Date(dateString).toLocaleDateString('sr-RS', options);
   };
 
+  const renderCategoryBadges = (categories: string[]) => {
+    return categories.map((cat, index) => (
+      <span 
+        key={index}
+        className={`inline-block px-3 py-1 text-xs font-medium rounded-full mr-2 mb-2 ${
+          cat === 'featured' 
+            ? 'bg-orange-500 text-white' 
+            : 'bg-blue-500 text-white'
+        }`}
+      >
+        {cat.toUpperCase()}
+      </span>
+    ));
+  };
+
+  if (loading) {
+    return (
+      <section className="section bg-gray-50">
+        <div className="container">
+          <div className="text-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Učitavanje najnovijih vesti...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   if (!featuredArticle) {
-    return null;
+    return (
+      <section className="section bg-gray-50">
+        <div className="container">
+          <AnimatedSection className="text-center">
+            <h2 className="text-4xl font-bold text-blue-600 mb-4">Najnovije vesti</h2>
+            <p className="text-gray-600 mb-8">Trenutno nema dostupnih vesti.</p>
+            <Link to="/news" className="btn-primary">
+              Idite na stranicu vesti
+            </Link>
+          </AnimatedSection>
+        </div>
+      </section>
+    );
   }
 
   return (
@@ -72,9 +113,9 @@ const LatestNews: React.FC = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                 <div className="absolute bottom-0 left-0 p-6">
-                  <span className="inline-block bg-orange-500 text-white px-3 py-1 text-xs font-medium rounded-full mb-2">
-                    Istaknuto
-                  </span>
+                  <div className="mb-2">
+                    {renderCategoryBadges(featuredArticle.category)}
+                  </div>
                   <h3 className="text-xl sm:text-2xl font-bold text-white">{featuredArticle.naslov}</h3>
                 </div>
               </div>
@@ -103,7 +144,7 @@ const LatestNews: React.FC = () => {
           {/* Recent Articles */}
           <div className="lg:col-span-2 space-y-6">
             {recentArticles.map((article, index) => (
-              <AnimatedSection key={index} delay={index * 0.1} className="card overflow-hidden group">
+              <AnimatedSection key={article.id} delay={index * 0.1} className="card overflow-hidden group">
                 <Link to={`/news/${article.slug}`} className="flex flex-col sm:flex-row">
                   <div className="sm:w-1/3 h-48 sm:h-auto relative overflow-hidden">
                     <img 
@@ -120,6 +161,9 @@ const LatestNews: React.FC = () => {
                     <h3 className="text-lg font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
                       {article.naslov}
                     </h3>
+                    <div className="mb-2">
+                      {renderCategoryBadges(article.category)}
+                    </div>
                     <p className="text-gray-600 text-sm line-clamp-2">
                       {article.tekst?.slice(0, 100)}...
                     </p>

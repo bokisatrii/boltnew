@@ -10,6 +10,7 @@ const Home = React.lazy(() => import('./pages/Home'));
 const League = React.lazy(() => import('./pages/League'));
 const News = React.lazy(() => import('./pages/News'));
 const NewsDetail = React.lazy(() => import('./pages/NewsDetail'));
+const Podcast = React.lazy(() => import('./pages/Podcast'));
 const Register = React.lazy(() => import('./pages/Register'));
 const Contact = React.lazy(() => import('./pages/Contact'));
 
@@ -26,6 +27,7 @@ function App() {
                 <Route path="/league" element={<League />} />
                 <Route path="/news" element={<News />} />
                 <Route path="/news/:slug" element={<NewsDetail />} />
+                <Route path="/podcast" element={<Podcast />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/contact" element={<Contact />} />
                 {/* 404 stranica */}

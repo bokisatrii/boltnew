@@ -5,7 +5,7 @@ import FeaturedMatch from '../components/league/FeaturedMatch';
 import AnimatedSection from '../components/ui/AnimatedSection';
 import { ProcessedTeam } from '../types';
 import { getUpcomingMatches, getFeaturedMatch } from '../data/matches';
-import { fetchYahooFantasyData, getStaticTeamsData } from '../services/sheetbestApi';
+import { fetchYahooFantasyData, getStaticTeamsData } from '../services/googleSheetsApi';
 
 const League: React.FC = () => {
   const [teams, setTeams] = useState<ProcessedTeam[]>([]);

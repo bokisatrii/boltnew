@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Home, Newspaper, Mic, Trophy, BarChart3 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Header: React.FC = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);            // prati da li je skrolovano
+  const [isMenuOpen, setIsMenuOpen] = useState(false);            // mobile menu toggle
+  const [isFantasyOpen, setIsFantasyOpen] = useState(false);      // fantasy dropdown toggle
   const location = useLocation();
 
-  // Optimizovano scroll handling sa throttling
+  // Prati scroll da bi promenio stil navbara (npr. dodao senku)
   useEffect(() => {
     let ticking = false;
-    
     const handleScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
@@ -21,56 +21,54 @@ const Header: React.FC = () => {
         ticking = true;
       }
     };
-
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Auto-close menu na route change
+  // Zatvori meni kad se promeni ruta
   useEffect(() => {
     setIsMenuOpen(false);
+    setIsFantasyOpen(false);
   }, [location]);
 
-  // Memoized navigation links
-  const navigationLinks = useMemo(() => [
-    { name: 'Početna', path: '/' },
-    { name: 'Liga', path: '/league' },
-    { name: 'Vesti', path: '/news' },
-    { name: 'Kontakt', path: '/contact' },
-  ], []);
-
-  const isActive = useCallback((path: string) => {
-    if (path === '/') {
-      return location.pathname === '/';
-    }
-    return location.pathname.startsWith(path);
-  }, [location.pathname]);
-
-  const toggleMenu = useCallback(() => {
-    setIsMenuOpen(prev => !prev);
-  }, []);
-
-  // Keyboard accessibility za mobile menu
+  // Dodaj/ukloni body scroll i escape shortcut za mobilni meni
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isMenuOpen) {
         setIsMenuOpen(false);
       }
+      if (e.key === 'Escape' && isFantasyOpen) {
+        setIsFantasyOpen(false);
+      }
     };
-
     if (isMenuOpen) {
       document.addEventListener('keydown', handleKeyDown);
-      // Prevent body scroll kada je menu otvoren
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
-
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
     };
+  }, [isMenuOpen, isFantasyOpen]);
+
+  // Toggle menu function
+  const toggleMenu = useCallback(() => {
+    setIsMenuOpen(!isMenuOpen);
   }, [isMenuOpen]);
+
+  // Pomocna funkcija da oboji aktivni link
+  const isActive = (path: string) => location.pathname === path;
+
+  // Fantasy dropdown handlers
+  const handleFantasyMouseEnter = () => {
+    setIsFantasyOpen(true);
+  };
+
+  const handleFantasyMouseLeave = () => {
+    setIsFantasyOpen(false);
+  };
 
   return (
     <header 
@@ -96,32 +94,74 @@ const Header: React.FC = () => {
           </span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex space-x-8" role="navigation" aria-label="Glavna navigacija">
-          {navigationLinks.map((link) => (
+        {/* Navigacija - desktop verzija */}
+        <nav className="hidden md:flex gap-2 items-center text-sm font-medium">
+          {[
+            { name: 'Početna', path: '/' },
+            { name: 'Vesti', path: '/news' },
+            { name: 'Podcast', path: '/podcast' },
+          ].map((link) => (
             <Link
               key={link.path}
               to={link.path}
-              className={`relative font-medium transition-colors duration-300 ${
-                isScrolled ? 'text-gray-700 hover:text-blue-600' : 'text-white hover:text-orange-300'
-              } ${isActive(link.path) ? 'font-bold' : ''}`}
-              aria-current={isActive(link.path) ? 'page' : undefined}
+              className={`px-4 py-1.5 rounded-full transition-colors duration-200 ${
+                isActive(link.path)
+                  ? 'bg-blue-100 text-blue-700 font-semibold'
+                  : isScrolled
+                  ? 'text-gray-800 hover:bg-gray-100'
+                  : 'text-white hover:bg-white/20'
+              }`}
             >
               {link.name}
-              {isActive(link.path) && (
-                <motion.div
-                  layoutId="underline"
-                  className={`absolute -bottom-1 left-0 right-0 h-0.5 ${
-                    isScrolled ? 'bg-blue-600' : 'bg-orange-500'
-                  }`}
-                  transition={{ type: "spring", duration: 0.6 }}
-                />
-              )}
             </Link>
           ))}
+
+          {/* Dropdown za "Fantasy" */}
+          <div 
+            className="relative"
+            onMouseEnter={handleFantasyMouseEnter}
+            onMouseLeave={handleFantasyMouseLeave}
+          >
+            <button
+              className={`px-4 py-1.5 rounded-full transition-colors duration-200 ${
+                isFantasyOpen
+                  ? 'bg-blue-100 text-blue-700 font-semibold'
+                  : isScrolled
+                  ? 'text-gray-800 hover:bg-gray-100'
+                  : 'text-white hover:bg-white/20'
+              }`}
+            >
+              Fantasy
+            </button>
+            
+            <AnimatePresence>
+              {isFantasyOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                  transition={{ duration: 0.15, ease: "easeOut" }}
+                  className="absolute left-0 mt-1 bg-white/60 backdrop-blur-md shadow-xl rounded-2xl overflow-hidden min-w-[140px] z-20"
+                >
+                  <Link 
+                    to="/fantasy-news" 
+                    className="block px-4 py-3 text-gray-800 hover:bg-white/30 hover:text-blue-700 transition-colors duration-150 text-sm font-medium"
+                  >
+                    Vesti
+                  </Link>
+                  <Link 
+                    to="/league" 
+                    className="block px-4 py-3 text-gray-800 hover:bg-white/30 hover:text-blue-700 transition-colors duration-150 text-sm font-medium border-t border-white/20"
+                  >
+                    Tabela
+                  </Link>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </nav>
 
-        {/* CTA Button */}
+        {/* CTA dugme */}
         <Link 
           to="/register" 
           className={`hidden md:block btn ${
@@ -131,7 +171,7 @@ const Header: React.FC = () => {
           Prijavi ekipu
         </Link>
 
-        {/* Mobile Menu Button */}
+        {/* Mobilni toggle meni */}
         <button 
           onClick={toggleMenu}
           className="md:hidden text-2xl p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
@@ -152,7 +192,7 @@ const Header: React.FC = () => {
         </button>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* Navigacija - mobilna verzija */}
       <AnimatePresence>
         {isMenuOpen && (
           <>
@@ -164,8 +204,8 @@ const Header: React.FC = () => {
               className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
               onClick={() => setIsMenuOpen(false)}
             />
-            
-            {/* Menu */}
+
+            {/* Meni */}
             <motion.nav
               id="mobile-menu"
               initial={{ opacity: 0, height: 0 }}
@@ -176,37 +216,90 @@ const Header: React.FC = () => {
               role="navigation"
               aria-label="Mobilna navigacija"
             >
-              <div className="container py-6 flex flex-col space-y-4">
-                {navigationLinks.map((link, index) => (
-                  <motion.div
-                    key={link.path}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
+              <div className="container py-6">
+                {/* Glavna navigacija */}
+                <div className="space-y-2 mb-6">
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-3">
+                    Navigacija
+                  </h3>
+                  
+                  <Link 
+                    to="/" 
+                    className={`flex items-center space-x-3 px-4 py-3 text-lg rounded-xl transition-all duration-200 ${
+                      isActive('/') 
+                        ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 font-semibold transform scale-105' 
+                        : 'text-gray-800 hover:bg-gray-50 hover:text-blue-600 hover:transform hover:scale-102'
+                    }`}
                   >
-                    <Link
-                      to={link.path}
-                      className={`text-gray-800 hover:text-blue-600 py-3 text-lg block transition-colors duration-200 ${
-                        isActive(link.path) ? 'font-bold text-blue-600' : ''
-                      }`}
-                      aria-current={isActive(link.path) ? 'page' : undefined}
-                    >
-                      {link.name}
-                    </Link>
-                  </motion.div>
-                ))}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                >
+                    <Home size={20} />
+                    <span>Početna</span>
+                  </Link>
+                  
+                  <Link 
+                    to="/news" 
+                    className={`flex items-center space-x-3 px-4 py-3 text-lg rounded-xl transition-all duration-200 ${
+                      isActive('/news') 
+                        ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 font-semibold transform scale-105' 
+                        : 'text-gray-800 hover:bg-gray-50 hover:text-blue-600 hover:transform hover:scale-102'
+                    }`}
+                  >
+                    <Newspaper size={20} />
+                    <span>Vesti</span>
+                  </Link>
+                  
+                  <Link 
+                    to="/podcast" 
+                    className={`flex items-center space-x-3 px-4 py-3 text-lg rounded-xl transition-all duration-200 ${
+                      isActive('/podcast') 
+                        ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 font-semibold transform scale-105' 
+                        : 'text-gray-800 hover:bg-gray-50 hover:text-blue-600 hover:transform hover:scale-102'
+                    }`}
+                  >
+                    <Mic size={20} />
+                    <span>Podcast</span>
+                  </Link>
+                </div>
+
+                {/* Fantasy sekcija */}
+                <div className="space-y-2 mb-6">
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-3">
+                    Fantasy
+                  </h3>
+                  
+                  <Link 
+                    to="/fantasy-news" 
+                    className={`flex items-center space-x-3 px-4 py-3 text-lg rounded-xl transition-all duration-200 ${
+                      isActive('/fantasy-news') 
+                        ? 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 font-semibold transform scale-105' 
+                        : 'text-gray-800 hover:bg-purple-50 hover:text-purple-600 hover:transform hover:scale-102'
+                    }`}
+                  >
+                    <Trophy size={20} />
+                    <span>Fantasy Vesti</span>
+                  </Link>
+                  
+                  <Link 
+                    to="/league" 
+                    className={`flex items-center space-x-3 px-4 py-3 text-lg rounded-xl transition-all duration-200 ${
+                      isActive('/league') 
+                        ? 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 font-semibold transform scale-105' 
+                        : 'text-gray-800 hover:bg-purple-50 hover:text-purple-600 hover:transform hover:scale-102'
+                    }`}
+                  >
+                    <BarChart3 size={20} />
+                    <span>Tabela</span>
+                  </Link>
+                </div>
+
+                {/* CTA dugme */}
+                <div className="px-4">
                   <Link 
                     to="/register" 
-                    className="btn btn-primary text-center mt-4 w-full"
+                    className="btn btn-primary text-center w-full py-4 text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
                   >
                     Prijavi ekipu
                   </Link>
-                </motion.div>
+                </div>
               </div>
             </motion.nav>
           </>
