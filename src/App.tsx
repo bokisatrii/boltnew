@@ -4,7 +4,8 @@ import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import LoadingSpinner from './components/ui/LoadingSpinner';
 import ErrorBoundary from './components/ErrorBoundary';
-import { Analytics } from '@vercel/analytics/react'; // ✅ Tačan import za Vite + React
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react'; // 👈 ovde dodato
 
 // Lazy load stranica za bolju performance
 const Home = React.lazy(() => import('./pages/Home'));
@@ -31,7 +32,6 @@ function App() {
                 <Route path="/podcast" element={<Podcast />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/contact" element={<Contact />} />
-                {/* 404 stranica */}
                 <Route
                   path="*"
                   element={
@@ -49,7 +49,8 @@ function App() {
           </main>
           <Footer />
         </div>
-        <Analytics /> {/* ✅ Komponenta mora biti unutar <Router>, ali van <main> */}
+        <Analytics /> {/* 📈 */}
+        <SpeedInsights /> {/* 🚀 */}
       </Router>
     </ErrorBoundary>
   );
