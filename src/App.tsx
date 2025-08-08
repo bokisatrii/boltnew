@@ -4,6 +4,7 @@ import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import LoadingSpinner from './components/ui/LoadingSpinner';
 import ErrorBoundary from './components/ErrorBoundary';
+import { Analytics } from '@vercel/analytics/react'; // ✅ Tačan import za Vite + React
 
 // Lazy load stranica za bolju performance
 const Home = React.lazy(() => import('./pages/Home'));
@@ -31,18 +32,24 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/contact" element={<Contact />} />
                 {/* 404 stranica */}
-                <Route path="*" element={
-                  <div className="section text-center">
-                    <h1 className="text-4xl font-bold mb-4">404</h1>
-                    <p className="text-xl mb-8">Stranica nije pronađena</p>
-                    <a href="/" className="btn btn-primary">Nazad na početnu</a>
-                  </div>
-                } />
+                <Route
+                  path="*"
+                  element={
+                    <div className="section text-center">
+                      <h1 className="text-4xl font-bold mb-4">404</h1>
+                      <p className="text-xl mb-8">Stranica nije pronađena</p>
+                      <a href="/" className="btn btn-primary">
+                        Nazad na početnu
+                      </a>
+                    </div>
+                  }
+                />
               </Routes>
             </Suspense>
           </main>
           <Footer />
         </div>
+        <Analytics /> {/* ✅ Komponenta mora biti unutar <Router>, ali van <main> */}
       </Router>
     </ErrorBoundary>
   );
