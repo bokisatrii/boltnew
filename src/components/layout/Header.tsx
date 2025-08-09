@@ -144,7 +144,7 @@ const Header: React.FC = () => {
                   className="absolute left-0 mt-1 bg-white/60 backdrop-blur-md shadow-xl rounded-2xl overflow-hidden min-w-[140px] z-20"
                 >
                   <Link 
-                    to="/fantasy-news" 
+                    to="/news?category=fantasy" 
                     className="block px-4 py-3 text-gray-800 hover:bg-white/30 hover:text-blue-700 transition-colors duration-150 text-sm font-medium"
                   >
                     Vesti
