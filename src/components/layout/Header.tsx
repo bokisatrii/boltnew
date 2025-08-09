@@ -70,11 +70,56 @@ const Header: React.FC = () => {
     setIsFantasyOpen(false);
   };
 
+  // Funkcija za određivanje da li je stranica "svetla" (bela pozadina)
+  const isLightPage = () => {
+    const lightPages = ['/news', '/league', '/register', '/contact'];
+    return lightPages.some(page => location.pathname.startsWith(page)) || 
+           (location.pathname.startsWith('/news/') && location.pathname !== '/news');
+  };
+
+  // Dinamički stil za navigaciju na osnovu stranice i scroll pozicije
+  const getNavStyle = () => {
+    if (isScrolled) {
+      return 'bg-white shadow-md py-3';
+    } else if (isLightPage()) {
+      return 'bg-white/95 backdrop-blur-sm shadow-sm py-4';
+    } else {
+      return 'bg-transparent py-5';
+    }
+  };
+
+  // Dinamički stil za tekst na osnovu stranice i scroll pozicije
+  const getTextColor = () => {
+    if (isScrolled || isLightPage()) {
+      return 'text-gray-800';
+    } else {
+      return 'text-white';
+    }
+  };
+
+  // Dinamički stil za logo tekst
+  const getLogoTextColor = () => {
+    if (isScrolled || isLightPage()) {
+      return 'text-blue-600';
+    } else {
+      return 'text-white';
+    }
+  };
+
+  // Dinamički stil za hover efekte
+  const getHoverStyle = (isActiveLink: boolean) => {
+    if (isActiveLink) {
+      return 'bg-blue-100 text-blue-700 font-semibold';
+    } else if (isScrolled || isLightPage()) {
+      return 'text-gray-800 hover:bg-gray-100';
+    } else {
+      return 'text-white hover:bg-white/20';
+    }
+  };
+
   return (
     <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-white shadow-md py-3' : 'bg-transparent py-5'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${getNavStyle()}`}
     >
       <div className="container flex justify-between items-center">
         {/* Logo */}
@@ -87,9 +132,7 @@ const Header: React.FC = () => {
             width={32}
             height={32}
           />
-          <span className={`text-xl md:text-2xl font-bold transition-colors duration-300 ${
-            isScrolled ? 'text-blue-600' : 'text-white'
-          }`}>
+          <span className={`text-xl md:text-2xl font-bold transition-colors duration-300 ${getLogoTextColor()}`}>
             BasketLiga
           </span>
         </Link>
@@ -104,13 +147,7 @@ const Header: React.FC = () => {
             <Link
               key={link.path}
               to={link.path}
-              className={`px-4 py-1.5 rounded-full transition-colors duration-200 ${
-                isActive(link.path)
-                  ? 'bg-blue-100 text-blue-700 font-semibold'
-                  : isScrolled
-                  ? 'text-gray-800 hover:bg-gray-100'
-                  : 'text-white hover:bg-white/20'
-              }`}
+              className={`px-4 py-1.5 rounded-full transition-colors duration-200 ${getHoverStyle(isActive(link.path))}`}
             >
               {link.name}
             </Link>
@@ -126,7 +163,7 @@ const Header: React.FC = () => {
               className={`px-4 py-1.5 rounded-full transition-colors duration-200 ${
                 isFantasyOpen
                   ? 'bg-blue-100 text-blue-700 font-semibold'
-                  : isScrolled
+                  : isScrolled || isLightPage()
                   ? 'text-gray-800 hover:bg-gray-100'
                   : 'text-white hover:bg-white/20'
               }`}
@@ -141,17 +178,17 @@ const Header: React.FC = () => {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
                   transition={{ duration: 0.15, ease: "easeOut" }}
-                  className="absolute left-0 mt-1 bg-white/60 backdrop-blur-md shadow-xl rounded-2xl overflow-hidden min-w-[140px] z-20"
+                  className="absolute left-0 mt-1 bg-white/95 backdrop-blur-md shadow-xl rounded-2xl overflow-hidden min-w-[140px] z-20"
                 >
                   <Link 
-                    to="/fantasy-news" 
-                    className="block px-4 py-3 text-gray-800 hover:bg-white/30 hover:text-blue-700 transition-colors duration-150 text-sm font-medium"
+                    to="/news?category=fantasy" 
+                    className="block px-4 py-3 text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-150 text-sm font-medium"
                   >
                     Vesti
                   </Link>
                   <Link 
                     to="/league" 
-                    className="block px-4 py-3 text-gray-800 hover:bg-white/30 hover:text-blue-700 transition-colors duration-150 text-sm font-medium border-t border-white/20"
+                    className="block px-4 py-3 text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-150 text-sm font-medium border-t border-gray-200"
                   >
                     Tabela
                   </Link>
@@ -165,7 +202,7 @@ const Header: React.FC = () => {
         <Link 
           to="/register" 
           className={`hidden md:block btn ${
-            isScrolled ? 'btn-primary' : 'bg-orange-500 hover:bg-orange-600 text-white'
+            isScrolled || isLightPage() ? 'btn-primary' : 'bg-orange-500 hover:bg-orange-600 text-white'
           } transform hover:scale-105 transition-transform duration-200`}
         >
           Prijavi ekipu
@@ -184,9 +221,9 @@ const Header: React.FC = () => {
             transition={{ duration: 0.3 }}
           >
             {isMenuOpen ? (
-              <X className={isScrolled ? 'text-gray-800' : 'text-white'} />
+              <X className={getTextColor()} />
             ) : (
-              <Menu className={isScrolled ? 'text-gray-800' : 'text-white'} />
+              <Menu className={getTextColor()} />
             )}
           </motion.div>
         </button>
@@ -267,9 +304,9 @@ const Header: React.FC = () => {
                   </h3>
                   
                   <Link 
-                    to="/fantasy-news" 
+                    to="/news?category=fantasy" 
                     className={`flex items-center space-x-3 px-4 py-3 text-lg rounded-xl transition-all duration-200 ${
-                      isActive('/fantasy-news') 
+                      isActive('/news') && window.location.search.includes('category=fantasy')
                         ? 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 font-semibold transform scale-105' 
                         : 'text-gray-800 hover:bg-purple-50 hover:text-purple-600 hover:transform hover:scale-102'
                     }`}
