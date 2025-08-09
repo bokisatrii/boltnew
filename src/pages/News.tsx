@@ -9,7 +9,14 @@ const News: React.FC = () => {
 
   useEffect(() => {
     document.title = 'BasketLiga - Vesti';
-  }, []);
+    
+    // Update filter when URL changes
+    const urlParams = new URLSearchParams(location.search);
+    const categoryFromUrl = urlParams.get('category');
+    if (categoryFromUrl) {
+      setFilter(categoryFromUrl);
+    }
+  }, [location.search]);
 
   // Filter posts based on selected category - now supports multiple categories per post
   const filteredPosts = filter === 'sve' 

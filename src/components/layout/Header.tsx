@@ -267,9 +267,9 @@ const Header: React.FC = () => {
                   </h3>
                   
                   <Link 
-                    to="/fantasy-news" 
+                    to="/news?category=fantasy" 
                     className={`flex items-center space-x-3 px-4 py-3 text-lg rounded-xl transition-all duration-200 ${
-                      isActive('/fantasy-news') 
+                      isActive('/news') && window.location.search.includes('category=fantasy')
                         ? 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 font-semibold transform scale-105' 
                         : 'text-gray-800 hover:bg-purple-50 hover:text-purple-600 hover:transform hover:scale-102'
                     }`}
