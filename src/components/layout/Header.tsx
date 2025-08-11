@@ -1,151 +1,347 @@
-import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Menu, X, Home, Newspaper, Mic, Trophy, BarChart3 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-/**
- * Header / Navbar
- * - Transparent + beli tekst SAMO na herou ('/' i '/podcast') dok nisi skrolovao
- * - Na svim drugim rutama odmah je svetli header (bela pozadina, tamni tekst)
- */
 const Header: React.FC = () => {
+  const [isScrolled, setIsScrolled] = useState(false);            // prati da li je skrolovano
+  const [isMenuOpen, setIsMenuOpen] = useState(false);            // mobile menu toggle
+  const [isFantasyOpen, setIsFantasyOpen] = useState(false);      // fantasy dropdown toggle
   const location = useLocation();
-  const [isScrolled, setIsScrolled] = useState(false);
-  const heroRoutes = ["/", "/podcast"];
-  const onHeroTop = heroRoutes.includes(location.pathname) && !isScrolled;
 
+  // Prati scroll da bi promenio stil navbara (npr. dodao senku)
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 10);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [location.pathname]);
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 10);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-  // EDITUJ po potrebi – čuvam neutralne nazive da ne uvodim zavisnost od tačnih ruta
-  const navLinks = [
-    { to: "/news", label: "Vesti" },
-    { to: "/league", label: "Liga" },
-    { to: "/schedule", label: "Raspored" },
-    { to: "/podcast", label: "Podcast" },
-    { to: "/about", label: "O nama" },
-  ];
-
-  const [mobileOpen, setMobileOpen] = useState(false);
+  // Zatvori meni kad se promeni ruta
   useEffect(() => {
-    // zatvori mobilni meni kad promeniš rutu
-    setMobileOpen(false);
-  }, [location.pathname]);
+    setIsMenuOpen(false);
+    setIsFantasyOpen(false);
+  }, [location]);
+
+  // Dodaj/ukloni body scroll i escape shortcut za mobilni meni
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isMenuOpen) {
+        setIsMenuOpen(false);
+      }
+      if (e.key === 'Escape' && isFantasyOpen) {
+        setIsFantasyOpen(false);
+      }
+    };
+    if (isMenuOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMenuOpen, isFantasyOpen]);
+
+  // Toggle menu function
+  const toggleMenu = useCallback(() => {
+    setIsMenuOpen(!isMenuOpen);
+  }, [isMenuOpen]);
+
+  // Pomocna funkcija da oboji aktivni link
+  const isActive = (path: string) => location.pathname === path;
+
+  // Fantasy dropdown handlers
+  const handleFantasyMouseEnter = () => {
+    setIsFantasyOpen(true);
+  };
+
+  const handleFantasyMouseLeave = () => {
+    setIsFantasyOpen(false);
+  };
+
+  // Funkcija za određivanje da li je stranica "svetla" (bela pozadina)
+  const isLightPage = () => {
+    const lightPages = ['/news', '/league', '/register', '/contact'];
+    return lightPages.some(page => location.pathname.startsWith(page)) || 
+           (location.pathname.startsWith('/news/') && location.pathname !== '/news');
+  };
+
+  // Dinamički stil za navigaciju na osnovu stranice i scroll pozicije
+  const getNavStyle = () => {
+    if (isScrolled) {
+      return 'bg-white shadow-md py-3';
+    } else if (isLightPage()) {
+      return 'bg-white/95 backdrop-blur-sm shadow-sm py-4';
+    } else {
+      return 'bg-transparent py-5';
+    }
+  };
+
+  // Dinamički stil za tekst na osnovu stranice i scroll pozicije
+  const getTextColor = () => {
+    if (isScrolled || isLightPage()) {
+      return 'text-gray-800';
+    } else {
+      return 'text-white';
+    }
+  };
+
+  // Dinamički stil za logo tekst
+  const getLogoTextColor = () => {
+    if (isScrolled || isLightPage()) {
+      return 'text-blue-600';
+    } else {
+      return 'text-white';
+    }
+  };
+
+  // Dinamički stil za hover efekte
+  const getHoverStyle = (isActiveLink: boolean) => {
+    if (isActiveLink) {
+      return 'bg-blue-100 text-blue-700 font-semibold';
+    } else if (isScrolled || isLightPage()) {
+      return 'text-gray-800 hover:bg-gray-100';
+    } else {
+      return 'text-white hover:bg-white/20';
+    }
+  };
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300
-        ${onHeroTop
-          ? "bg-transparent py-5"
-          : "bg-white/80 backdrop-blur-md border-b border-gray-200/60 shadow-sm py-3"}`}
+    <header 
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${getNavStyle()}`}
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-4">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            {/* Ako imaš sliku logotipa, ubaci je ovde umesto teksta */}
-            <span
-              className={`text-xl md:text-2xl font-bold tracking-tight transition-colors duration-300
-                ${onHeroTop ? "text-white" : "text-blue-600"}`}
-            >
-              BasketLiga
-            </span>
-          </Link>
+      <div className="container flex justify-between items-center">
+        {/* Logo */}
+        <Link to="/" className="flex items-center space-x-2 group" aria-label="BasketLiga početna">
+          <img 
+            src="https://i.postimg.cc/cC10vrmV/2701142-ball-basketball-dribbble-game-logo-icon.png"
+            alt="BasketLiga Logo"
+            className="w-8 h-8 transition-transform duration-300 group-hover:scale-110"
+            loading="eager"
+            width={32}
+            height={32}
+          />
+          <span className={`text-xl md:text-2xl font-bold transition-colors duration-300 ${getLogoTextColor()}`}>
+            BasketLiga
+          </span>
+        </Link>
 
-          {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-1">
-            {navLinks.map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors duration-200
-                  ${onHeroTop
-                    ? "text-white/90 hover:text-white hover:bg-white/10"
-                    : "text-gray-800 hover:text-blue-700 hover:bg-gray-50"}`}
-              >
-                {item.label}
-              </Link>
-            ))}
-
-            {/* CTA desno */}
+        {/* Navigacija - desktop verzija */}
+        <nav className="hidden md:flex gap-2 items-center text-sm font-medium">
+          {[
+            { name: 'Početna', path: '/' },
+            { name: 'Vesti', path: '/news' },
+            { name: 'Podcast', path: '/podcast' },
+          ].map((link) => (
             <Link
-              to="/register"
-              className={`ml-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200
-                ${onHeroTop
-                  ? "bg-orange-500 hover:bg-orange-600 text-white"
-                  : "bg-blue-600 hover:bg-blue-700 text-white"}
-              `}
+              key={link.path}
+              to={link.path}
+              className={`px-4 py-1.5 rounded-full transition-colors duration-200 ${getHoverStyle(isActive(link.path))}`}
             >
-              Prijavi ekipu
+              {link.name}
             </Link>
-          </nav>
+          ))}
 
-          {/* Mobile toggle */}
-          <button
-            aria-label="Menu"
-            onClick={() => setMobileOpen((s) => !s)}
-            className={`md:hidden inline-flex items-center justify-center rounded-lg p-2 transition-colors
-              ${onHeroTop
-                ? "text-white hover:bg-white/10"
-                : "text-gray-800 hover:bg-gray-100"}`}
+          {/* Dropdown za "Fantasy" */}
+          <div 
+            className="relative"
+            onMouseEnter={handleFantasyMouseEnter}
+            onMouseLeave={handleFantasyMouseLeave}
           >
-            <svg
-              className="h-6 w-6"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
+            <button
+              className={`px-4 py-1.5 rounded-full transition-colors duration-200 ${
+                isFantasyOpen
+                  ? 'bg-blue-100 text-blue-700 font-semibold'
+                  : isScrolled || isLightPage()
+                  ? 'text-gray-800 hover:bg-gray-100'
+                  : 'text-white hover:bg-white/20'
+              }`}
             >
-              {mobileOpen ? (
-                <path d="M18 6L6 18M6 6l12 12" />
-              ) : (
-                <>
-                  <path d="M3 6h18" />
-                  <path d="M3 12h18" />
-                  <path d="M3 18h18" />
-                </>
+              Fantasy
+            </button>
+            
+            <AnimatePresence>
+              {isFantasyOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                  transition={{ duration: 0.15, ease: "easeOut" }}
+                  className="absolute left-0 mt-1 bg-white/95 backdrop-blur-md shadow-xl rounded-2xl overflow-hidden min-w-[140px] z-20"
+                >
+                  <Link 
+                    to="/news?category=fantasy" 
+                    className="block px-4 py-3 text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-150 text-sm font-medium"
+                  >
+                    Vesti
+                  </Link>
+                  <Link 
+                    to="/league" 
+                    className="block px-4 py-3 text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-150 text-sm font-medium border-t border-gray-200"
+                  >
+                    Tabela
+                  </Link>
+                </motion.div>
               )}
-            </svg>
-          </button>
-        </div>
+            </AnimatePresence>
+          </div>
+        </nav>
+
+        {/* CTA dugme */}
+        <Link 
+          to="/register" 
+          className={`hidden md:block btn ${
+            isScrolled || isLightPage() ? 'btn-primary' : 'bg-orange-500 hover:bg-orange-600 text-white'
+          } transform hover:scale-105 transition-transform duration-200`}
+        >
+          Prijavi ekipu
+        </Link>
+
+        {/* Mobilni toggle meni */}
+        <button 
+          onClick={toggleMenu}
+          className="md:hidden text-2xl p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+          aria-label={isMenuOpen ? 'Zatvorite meni' : 'Otvorite meni'}
+          aria-expanded={isMenuOpen}
+          aria-controls="mobile-menu"
+        >
+          <motion.div
+            animate={{ rotate: isMenuOpen ? 180 : 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {isMenuOpen ? (
+              <X className={getTextColor()} />
+            ) : (
+              <Menu className={getTextColor()} />
+            )}
+          </motion.div>
+        </button>
       </div>
 
-      {/* Mobile sheet */}
-      <div
-        className={`md:hidden transition-[max-height] duration-300 overflow-hidden
-          ${mobileOpen ? "max-h-96" : "max-h-0"}`}
-      >
-        <div
-          className={`mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-3 pt-2
-            ${onHeroTop ? "text-white" : "text-gray-900"}`}
-        >
-          <div className="flex flex-col gap-1">
-            {navLinks.map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={`rounded-lg px-3 py-2 text-base font-medium
-                  ${onHeroTop ? "hover:bg-white/10" : "hover:bg-gray-100"}`}
-              >
-                {item.label}
-              </Link>
-            ))}
-            <Link
-              to="/register"
-              className={`mt-1 rounded-lg px-3 py-2 text-base font-semibold text-center
-                ${onHeroTop
-                  ? "bg-orange-500 hover:bg-orange-600 text-white"
-                  : "bg-blue-600 hover:bg-blue-700 text-white"}`}
+      {/* Navigacija - mobilna verzija */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <>
+            {/* Overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+              onClick={() => setIsMenuOpen(false)}
+            />
+
+            {/* Meni */}
+            <motion.nav
+              id="mobile-menu"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="md:hidden bg-white shadow-lg overflow-hidden relative z-50"
+              role="navigation"
+              aria-label="Mobilna navigacija"
             >
-              Prijavi ekipu
-            </Link>
-          </div>
-        </div>
-      </div>
+              <div className="container py-6">
+                {/* Glavna navigacija */}
+                <div className="space-y-2 mb-6">
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-3">
+                    Navigacija
+                  </h3>
+                  
+                  <Link 
+                    to="/" 
+                    className={`flex items-center space-x-3 px-4 py-3 text-lg rounded-xl transition-all duration-200 ${
+                      isActive('/') 
+                        ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 font-semibold transform scale-105' 
+                        : 'text-gray-800 hover:bg-gray-50 hover:text-blue-600 hover:transform hover:scale-102'
+                    }`}
+                  >
+                    <Home size={20} />
+                    <span>Početna</span>
+                  </Link>
+                  
+                  <Link 
+                    to="/news" 
+                    className={`flex items-center space-x-3 px-4 py-3 text-lg rounded-xl transition-all duration-200 ${
+                      isActive('/news') 
+                        ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 font-semibold transform scale-105' 
+                        : 'text-gray-800 hover:bg-gray-50 hover:text-blue-600 hover:transform hover:scale-102'
+                    }`}
+                  >
+                    <Newspaper size={20} />
+                    <span>Vesti</span>
+                  </Link>
+                  
+                  <Link 
+                    to="/podcast" 
+                    className={`flex items-center space-x-3 px-4 py-3 text-lg rounded-xl transition-all duration-200 ${
+                      isActive('/podcast') 
+                        ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 font-semibold transform scale-105' 
+                        : 'text-gray-800 hover:bg-gray-50 hover:text-blue-600 hover:transform hover:scale-102'
+                    }`}
+                  >
+                    <Mic size={20} />
+                    <span>Podcast</span>
+                  </Link>
+                </div>
+
+                {/* Fantasy sekcija */}
+                <div className="space-y-2 mb-6">
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-3">
+                    Fantasy
+                  </h3>
+                  
+                  <Link 
+                    to="/news?category=fantasy" 
+                    className={`flex items-center space-x-3 px-4 py-3 text-lg rounded-xl transition-all duration-200 ${
+                      isActive('/news') && window.location.search.includes('category=fantasy')
+                        ? 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 font-semibold transform scale-105' 
+                        : 'text-gray-800 hover:bg-purple-50 hover:text-purple-600 hover:transform hover:scale-102'
+                    }`}
+                  >
+                    <Trophy size={20} />
+                    <span>Fantasy Vesti</span>
+                  </Link>
+                  
+                  <Link 
+                    to="/league" 
+                    className={`flex items-center space-x-3 px-4 py-3 text-lg rounded-xl transition-all duration-200 ${
+                      isActive('/league') 
+                        ? 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 font-semibold transform scale-105' 
+                        : 'text-gray-800 hover:bg-purple-50 hover:text-purple-600 hover:transform hover:scale-102'
+                    }`}
+                  >
+                    <BarChart3 size={20} />
+                    <span>Tabela</span>
+                  </Link>
+                </div>
+
+                {/* CTA dugme */}
+                <div className="px-4">
+                  <Link 
+                    to="/register" 
+                    className="btn btn-primary text-center w-full py-4 text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                  >
+                    Prijavi ekipu
+                  </Link>
+                </div>
+              </div>
+            </motion.nav>
+          </>
+        )}
+      </AnimatePresence>
     </header>
   );
 };
