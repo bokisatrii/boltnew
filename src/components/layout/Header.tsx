@@ -2,16 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 /**
- * Header / Navbar - ULTIMATIVNA VERZIJA
+ * Header / Navbar - KOMPLETNA VERZIJA
  * ✅ Optimizovane performanse (kao Opcija C)
  * ✅ Providnost na scroll (backdrop-blur)
  * ✅ Aktivni state za trenutnu stranicu (kao Opcija S)
  * ✅ Originalni layout i dugmići (kao Opcija S)
+ * ✅ Fantasy dropdown (kao Opcija S)
  * ✅ Dinamička logika za svetle stranice
  */
 const Header: React.FC = () => {
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isFantasyOpen, setIsFantasyOpen] = useState(false);
 
   // Hero stranice (transparentne na vrhu)
   const heroRoutes = ["/", "/podcast"];
@@ -44,7 +46,17 @@ const Header: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   useEffect(() => {
     setMobileOpen(false);
+    setIsFantasyOpen(false);
   }, [location.pathname]);
+
+  // Fantasy dropdown handlers
+  const handleFantasyMouseEnter = () => {
+    setIsFantasyOpen(true);
+  };
+
+  const handleFantasyMouseLeave = () => {
+    setIsFantasyOpen(false);
+  };
 
   // Dinamički stilovi
   const getHeaderStyle = () => {
@@ -67,6 +79,16 @@ const Header: React.FC = () => {
 
   const getLinkStyle = (isActiveLink: boolean) => {
     if (isActiveLink) {
+      return "bg-blue-100 text-blue-700 font-semibold";
+    } else if (onHeroTop && !isLightPage()) {
+      return "text-white/90 hover:text-white hover:bg-white/10";
+    } else {
+      return "text-gray-800 hover:text-blue-700 hover:bg-gray-50";
+    }
+  };
+
+  const getFantasyStyle = () => {
+    if (isFantasyOpen) {
       return "bg-blue-100 text-blue-700 font-semibold";
     } else if (onHeroTop && !isLightPage()) {
       return "text-white/90 hover:text-white hover:bg-white/10";
@@ -116,6 +138,36 @@ const Header: React.FC = () => {
               </Link>
             ))}
 
+            {/* Fantasy Dropdown */}
+            <div 
+              className="relative"
+              onMouseEnter={handleFantasyMouseEnter}
+              onMouseLeave={handleFantasyMouseLeave}
+            >
+              <button
+                className={`px-4 py-1.5 rounded-full transition-colors duration-200 ${getFantasyStyle()}`}
+              >
+                Fantasy
+              </button>
+              
+              {isFantasyOpen && (
+                <div className="absolute left-0 mt-1 bg-white/95 backdrop-blur-md shadow-xl rounded-2xl overflow-hidden min-w-[140px] z-20">
+                  <Link 
+                    to="/news?category=fantasy" 
+                    className="block px-4 py-3 text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-150 text-sm font-medium"
+                  >
+                    Vesti
+                  </Link>
+                  <Link 
+                    to="/league" 
+                    className="block px-4 py-3 text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-150 text-sm font-medium border-t border-gray-200"
+                  >
+                    Tabela
+                  </Link>
+                </div>
+              )}
+            </div>
+
             {/* CTA dugme */}
             <Link
               to="/register"
@@ -162,7 +214,12 @@ const Header: React.FC = () => {
       >
         <div className="bg-white shadow-lg">
           <div className="container mx-auto px-4 py-6">
+            {/* Glavna navigacija */}
             <div className="space-y-2 mb-6">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-3">
+                Navigacija
+              </h3>
+              
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
@@ -176,6 +233,31 @@ const Header: React.FC = () => {
                   {link.name}
                 </Link>
               ))}
+            </div>
+
+            {/* Fantasy sekcija */}
+            <div className="space-y-2 mb-6">
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-3">
+                Fantasy
+              </h3>
+              
+              <Link 
+                to="/news?category=fantasy" 
+                className="flex items-center px-4 py-3 text-lg rounded-xl transition-all duration-200 text-gray-800 hover:bg-purple-50 hover:text-purple-600 hover:transform hover:scale-102"
+              >
+                Fantasy Vesti
+              </Link>
+              
+              <Link 
+                to="/league" 
+                className={`flex items-center px-4 py-3 text-lg rounded-xl transition-all duration-200 ${
+                  isActive('/league') 
+                    ? 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 font-semibold transform scale-105' 
+                    : 'text-gray-800 hover:bg-purple-50 hover:text-purple-600 hover:transform hover:scale-102'
+                }`}
+              >
+                Tabela
+              </Link>
             </div>
 
             {/* Mobile CTA */}
