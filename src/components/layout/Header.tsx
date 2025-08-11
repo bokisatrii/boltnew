@@ -168,7 +168,7 @@ const Header: React.FC = () => {
                   : 'text-white hover:bg-white/20'
               }`}
             >
-              Fantasy
+              Fandy
             </button>
             
             <AnimatePresence>
