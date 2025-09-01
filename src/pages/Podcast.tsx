@@ -149,12 +149,12 @@ const Podcast: React.FC = () => {
 
   useEffect(() => {
     // Enhanced SEO
-    document.title = 'BasketLiga - Trojka iz Ćoška Podcast | Najnovije Epizode';
+    document.title = 'Trojka iz ćoška - Podcast | Najnovije Epizode';
     
     // Add meta tags for better SEO
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Slušajte najnovije epizode Trojka iz Ćoška podcasta. Košarka, NBA, analiza i diskusije - sve na jednom mestu!');
+      metaDescription.setAttribute('content', 'Slušajte najnovije epizode Trojka iz ćoška podcasta. Košarka, NBA, analiza i diskusije - sve na jednom mestu!');
     }
 
     // Add structured data for better search visibility
@@ -166,7 +166,7 @@ const Podcast: React.FC = () => {
       "url": window.location.href,
       "publisher": {
         "@type": "Organization",
-        "name": "BasketLiga"
+        "name": "Trojka iz ćoška"
       }
     };
 

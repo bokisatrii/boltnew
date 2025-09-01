@@ -11,11 +11,11 @@ const Footer: React.FC = () => {
           <div className="space-y-4">
             <Link to="/" className="flex items-center space-x-2">
               <Basketball size={32} className="text-orange-500" weight="fill" />
-              <span className="text-2xl font-bold">BasketLiga</span>
+              <span className="text-2xl font-bold">Trojka iz ćoška</span>
             </Link>
             <p className="text-gray-400 mt-4 leading-relaxed">
-              Profesionalna košarkaška liga sa dugom tradicijom promocije vrhunskog sporta, 
-              takmičarskog duha i razvoja mladih talenata.
+              Košarkaški podcast sa analizama NBA, Evrolige i fantasy košarke. 
+              Slušajte najnovije epizode i pratite našu fantasy ligu.
             </p>
           </div>
           
@@ -116,7 +116,7 @@ const Footer: React.FC = () => {
       {/* Bottom Bar */}
       <div className="bg-gray-950 py-4">
         <div className="container text-center text-gray-500 text-sm">
-          <p>© {new Date().getFullYear()} BasketLiga. Sva prava zadržana.</p>
+          <p>© {new Date().getFullYear()} Trojka iz ćoška. Sva prava zadržana.</p>
         </div>
       </div>
     </footer>

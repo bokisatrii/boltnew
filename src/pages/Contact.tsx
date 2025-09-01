@@ -4,7 +4,7 @@ import AnimatedSection from '../components/ui/AnimatedSection';
 
 const Contact: React.FC = () => {
   useEffect(() => {
-    document.title = 'BasketLiga - Kontakt';
+    document.title = 'Trojka iz ćoška - Kontakt';
   }, []);
 
   return (
@@ -150,9 +150,9 @@ const Contact: React.FC = () => {
               </div>
               
               <div className="mt-10">
-                <h3 className="text-lg font-semibold mb-4">O BasketLigi</h3>
+                <h3 className="text-lg font-semibold mb-4">O Trojka iz ćoška</h3>
                 <p className="text-blue-100">
-                  BasketLiga je profesionalna košarkaška liga osnovana 2025. godine sa ciljem da promoviše i razvija košarku u regionu. Kroz godine, liga je izrasla u prestižno takmičenje koje okuplja najbolje košarkaške ekipe i talente.
+                  Trojka iz ćoška je košarkaški podcast osnovan 2025. godine sa ciljem da promoviše i razvija košarku u regionu. Kroz epizode, podcast je izrastao u prestižnu platformu koja okuplja najbolje košarkaške analize i fantasy ligu.
                 </p>
               </div>
             </div>

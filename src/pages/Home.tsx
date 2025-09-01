@@ -6,7 +6,7 @@ import { statsData } from '../data/stats';
 
 const Home: React.FC = () => {
   useEffect(() => {
-    document.title = 'BasketLiga - Početna';
+    document.title = 'Trojka iz ćoška - Početna';
   }, []);
 
   return (

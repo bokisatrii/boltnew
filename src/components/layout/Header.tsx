@@ -82,17 +82,17 @@ const Header: React.FC = () => {
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${headerClass}`}>
       <div className="container flex justify-between items-center">
         {/* Logo */}
-        <Link to="/" className="flex items-center space-x-2 group" aria-label="BasketLiga početna">
+        <Link to="/" className="flex items-center space-x-2 group" aria-label="Trojka iz ćoška početna">
           <img
             src="https://i.postimg.cc/cC10vrmV/2701142-ball-basketball-dribbble-game-logo-icon.png"
-            alt="BasketLiga Logo"
+            alt="Trojka iz ćoška Logo"
             className="w-8 h-8 transition-transform duration-300 group-hover:scale-110"
             loading="eager"
             width={32}
             height={32}
           />
           <span className={`text-xl md:text-2xl font-bold transition-colors duration-300 ${logoTextClass}`}>
-            BasketLiga
+            Trojka iz ćoška
           </span>
         </Link>
 

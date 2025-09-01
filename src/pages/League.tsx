@@ -13,7 +13,7 @@ const League: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    document.title = 'BasketLiga - Liga';
+    document.title = 'Trojka iz ćoška - Liga';
     loadTeamsData();
   }, []);
 
@@ -58,7 +58,7 @@ const League: React.FC = () => {
     <div className="pt-24 pb-16">
       <div className="container">
         <AnimatedSection className="mb-10 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-blue-600 mb-4">BasketLiga</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-blue-600 mb-4">Trojka iz ćoška</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Pratite rezultate i raspored najuzbudljivije košarkaške lige u regionu
           </p>

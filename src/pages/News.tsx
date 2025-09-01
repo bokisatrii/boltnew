@@ -8,7 +8,7 @@ const News: React.FC = () => {
   const [filter, setFilter] = useState<string>('sve');
 
   useEffect(() => {
-    document.title = 'BasketLiga - Vesti';
+    document.title = 'Trojka iz ćoška - Vesti';
     
     // Update filter when URL changes
     const urlParams = new URLSearchParams(location.search);
@@ -31,7 +31,7 @@ const News: React.FC = () => {
         <AnimatedSection className="mb-10 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-blue-600 mb-4">Vesti</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Najnovije vesti, informacije i događaji iz BasketLige
+            Najnovije vesti, informacije i događaji iz Trojka iz ćoška
           </p>
         </AnimatedSection>
 

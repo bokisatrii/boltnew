@@ -64,7 +64,7 @@ const RegistrationForm: React.FC = () => {
               <div className="ml-4">
                 <h3 className="text-lg font-medium text-green-800">Uspešna prijava!</h3>
                 <p className="mt-2 text-green-700">
-                  Vaša ekipa je uspešno prijavljena za BasketLigu. Uskoro ćemo vas kontaktirati sa detaljima.
+                  Vaša ekipa je uspešno prijavljena za Trojka iz ćoška. Uskoro ćemo vas kontaktirati sa detaljima.
                 </p>
               </div>
             </div>

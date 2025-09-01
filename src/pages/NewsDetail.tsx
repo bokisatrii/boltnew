@@ -33,7 +33,7 @@ const NewsDetail = () => {
 
   useEffect(() => {
     if (post) {
-      document.title = `BasketLiga - ${post.naslov}`;
+      document.title = `Trojka iz ćoška - ${post.naslov}`;
     }
   }, [post]);
 
