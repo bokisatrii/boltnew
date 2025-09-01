@@ -22,7 +22,7 @@ const StatsCounter: React.FC<StatsCounterProps> = ({ stats }) => {
         <AnimatedSection className="text-center mb-12">
           <h2 className="text-4xl font-bold mb-4">Liga u brojkama</h2>
           <p className="max-w-2xl mx-auto text-lg text-blue-100">
-            BasketLiga je sinonim za vrhunsku košarku i nezaboravne trenutke
+            Trojka iz ćoška je sinonim za vrhunsku košarku i nezaboravne trenutke
           </p>
         </AnimatedSection>
 
