@@ -10,7 +10,9 @@ import { SpeedInsights } from '@vercel/speed-insights/react'; // 👈 ovde dodat
 // Lazy load stranica za bolju performance
 const Home = React.lazy(() => import('./pages/Home'));
 const League = React.lazy(() => import('./pages/League'));
-const News = React.lazy(() => import('./pages/News'));
+const News = React.lazy(() => 
+  import(/* webpackPrefetch: true */ './pages/News')
+);
 const NewsDetail = React.lazy(() => import('./pages/NewsDetail'));
 const Podcast = React.lazy(() => import('./pages/Podcast'));
 const Register = React.lazy(() => import('./pages/Register'));
