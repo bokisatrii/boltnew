@@ -14,7 +14,7 @@ const News = React.lazy(() =>
   import(/* webpackPrefetch: true */ './pages/News')
 );
 const NewsDetail = React.lazy(() => import('./pages/NewsDetail'));
-const Podcast = React.lazy(() => import('./pages/Podcast'));
+const Podcast = React.lazy(() => import(/* webpackPrefetch: true */ './pages/Podcast'));
 const Register = React.lazy(() => import('./pages/Register'));
 const Contact = React.lazy(() => import('./pages/Contact'));
 
