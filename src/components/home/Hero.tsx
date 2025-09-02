@@ -34,7 +34,7 @@ const Hero: React.FC = () => {
         >
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 leading-tight">
             Dobrodošli u 
-            <span className="block text-blue-500">Trojka iz ćoška</span>
+            <span className="block text-orange-500">Trojka iz ćoška</span>
           </h1>
         </motion.div>
 
