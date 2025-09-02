@@ -6,6 +6,7 @@ import LoadingSpinner from './components/ui/LoadingSpinner';
 import ErrorBoundary from './components/ErrorBoundary';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react'; // 👈 ovde dodato
+
 // Lazy load stranica za bolju performance
 const Home = React.lazy(() => import('./pages/Home'));
 const League = React.lazy(() => import('./pages/League'));
@@ -14,6 +15,7 @@ const NewsDetail = React.lazy(() => import('./pages/NewsDetail'));
 const Podcast = React.lazy(() => import('./pages/Podcast'));
 const Register = React.lazy(() => import('./pages/Register'));
 const Contact = React.lazy(() => import('./pages/Contact'));
+
 function App() {
   return (
     <ErrorBoundary>
@@ -31,7 +33,7 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route
-                  path=""
+                  path="*"
                   element={
                     <div className="section text-center">
                       <h1 className="text-4xl font-bold mb-4">404</h1>
@@ -47,10 +49,11 @@ function App() {
           </main>
           <Footer />
         </div>
-        <Analytics /> {/ 📈 /}
-        <SpeedInsights /> {/ 🚀 */}
+        <Analytics /> {/* 📈 */}
+        <SpeedInsights /> {/* 🚀 */}
       </Router>
     </ErrorBoundary>
   );
 }
+
 export default App;
