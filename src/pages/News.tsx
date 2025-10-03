@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import NewsGrid from '../components/news/NewsGrid';
 import AnimatedSection from '../components/ui/AnimatedSection';
+import SEO from '../components/SEO';
 import { useBlogPosts } from '../hooks/useBlog';
 
 const News: React.FC = () => {
@@ -8,8 +9,6 @@ const News: React.FC = () => {
   const [filter, setFilter] = useState<string>('sve');
 
   useEffect(() => {
-    document.title = 'Trojka iz ćoška - Vesti';
-    
     // Update filter when URL changes
     const urlParams = new URLSearchParams(location.search);
     const categoryFromUrl = urlParams.get('category');
@@ -17,6 +16,17 @@ const News: React.FC = () => {
       setFilter(categoryFromUrl);
     }
   }, [location.search]);
+
+  const getCategoryName = () => {
+    const categoryNames: { [key: string]: string } = {
+      'sve': 'Sve Vesti',
+      'nba': 'NBA Vesti',
+      'europe': 'Evroliga Vesti',
+      'ncaa': 'NCAA Vesti',
+      'fantasy': 'Fantasy Košarka Vesti'
+    };
+    return categoryNames[filter] || 'Sve Vesti';
+  };
 
   // Filter posts based on selected category - now supports multiple categories per post
   const filteredPosts = filter === 'sve' 
@@ -26,7 +36,15 @@ const News: React.FC = () => {
       );
 
   return (
-    <div className="pt-24 pb-16">
+    <>
+      <SEO
+        title={`${getCategoryName()} - Trojka iz ćoška`}
+        description={`Najnovije ${getCategoryName().toLowerCase()} iz sveta košarke. Pratite NBA, Evroligu, NCAA i fantasy košarku na jednom mestu.`}
+        keywords={`košarka vesti, NBA vesti, Evroliga vesti, fantasy košarka, ${filter} vesti, trojka iz ćoška, basketball news serbia`}
+        url={filter === 'sve' ? '/news' : `/news?category=${filter}`}
+      />
+
+      <div className="pt-24 pb-16">
       <div className="container">
         <AnimatedSection className="mb-10 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-blue-600 mb-4">Vesti</h1>
@@ -86,7 +104,8 @@ const News: React.FC = () => {
           <NewsGrid articles={filteredPosts} />
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

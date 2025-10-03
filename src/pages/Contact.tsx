@@ -1,14 +1,19 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Telescope as Mail, MapPin, Phone } from 'lucide-react';
 import AnimatedSection from '../components/ui/AnimatedSection';
+import SEO from '../components/SEO';
 
 const Contact: React.FC = () => {
-  useEffect(() => {
-    document.title = 'Trojka iz ćoška - Kontakt';
-  }, []);
-
   return (
-    <div className="pt-24 pb-16">
+    <>
+      <SEO
+        title="Kontakt - Poručite nam | Trojka iz ćoška"
+        description="Stupite u kontakt sa timom Trojka iz ćoška. Imate pitanja o fantasy ligi, podcastu ili želite da postanete deo naše zajednice? Javite nam se!"
+        keywords="kontakt trojka iz ćoška, košarkaški podcast kontakt, fantasy liga kontakt, basketball podcast serbia contact"
+        url="/contact"
+      />
+
+      <div className="pt-24 pb-16">
       <div className="container">
         <AnimatedSection className="mb-10 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-blue-600 mb-4">Kontakt</h1>
@@ -159,7 +164,8 @@ const Contact: React.FC = () => {
           </AnimatedSection>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

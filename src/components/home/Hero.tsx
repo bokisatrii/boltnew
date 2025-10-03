@@ -15,12 +15,14 @@ const Hero: React.FC = () => {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <div 
-          className="absolute inset-0 bg-cover bg-center" 
-          style={{ 
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
             backgroundImage: 'url(https://images.pexels.com/photos/2834917/pexels-photo-2834917.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2)',
             filter: 'brightness(0.5)'
           }}
+          role="img"
+          aria-label="Košarkaški teren sa loptom - pozadinska slika za Trojka iz ćoška fantasy ligu"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-blue-900/70 to-blue-800/70" />
       </div>

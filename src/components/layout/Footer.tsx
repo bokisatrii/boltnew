@@ -6,7 +6,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Logo and About */}
           <div className="space-y-4">
             <Link to="/" className="flex items-center space-x-2">
@@ -30,12 +30,17 @@ const Footer: React.FC = () => {
               </li>
               <li>
                 <Link to="/league" className="text-gray-400 hover:text-orange-500 transition-colors">
-                  Liga
+                  Fantasy Liga Tabela
                 </Link>
               </li>
               <li>
                 <Link to="/news" className="text-gray-400 hover:text-orange-500 transition-colors">
-                  Vesti
+                  Košarkaške Vesti
+                </Link>
+              </li>
+              <li>
+                <Link to="/podcast" className="text-gray-400 hover:text-orange-500 transition-colors">
+                  Podcast Epizode
                 </Link>
               </li>
               <li>
@@ -47,6 +52,43 @@ const Footer: React.FC = () => {
                 <Link to="/contact" className="text-gray-400 hover:text-orange-500 transition-colors">
                   Kontakt
                 </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Categories Links */}
+          <div>
+            <h3 className="text-lg font-bold mb-4 border-b border-gray-700 pb-2">Kategorije</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link to="/news?category=nba" className="text-gray-400 hover:text-orange-500 transition-colors">
+                  NBA Vesti
+                </Link>
+              </li>
+              <li>
+                <Link to="/news?category=europe" className="text-gray-400 hover:text-orange-500 transition-colors">
+                  Evroliga
+                </Link>
+              </li>
+              <li>
+                <Link to="/news?category=fantasy" className="text-gray-400 hover:text-orange-500 transition-colors">
+                  Fantasy Košarka
+                </Link>
+              </li>
+              <li>
+                <Link to="/news?category=ncaa" className="text-gray-400 hover:text-orange-500 transition-colors">
+                  NCAA Košarka
+                </Link>
+              </li>
+              <li>
+                <a
+                  href="https://open.spotify.com/show/3bkhQToL2N4YJ5I2jSopfZ"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-orange-500 transition-colors"
+                >
+                  Spotify Podcast
+                </a>
               </li>
             </ul>
           </div>

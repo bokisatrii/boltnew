@@ -3,6 +3,7 @@ import StandingsTable from '../components/league/StandingsTable';
 import UpcomingMatches from '../components/league/UpcomingMatches';
 import FeaturedMatch from '../components/league/FeaturedMatch';
 import AnimatedSection from '../components/ui/AnimatedSection';
+import SEO from '../components/SEO';
 import { ProcessedTeam } from '../types';
 import { getUpcomingMatches, getFeaturedMatch } from '../data/matches';
 import { fetchYahooFantasyData, getStaticTeamsData } from '../services/googleSheetsApi';
@@ -13,7 +14,6 @@ const League: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    document.title = 'Trojka iz ćoška - Liga';
     loadTeamsData();
   }, []);
 
@@ -55,7 +55,15 @@ const League: React.FC = () => {
   console.log('Current component state:', { teams, loading, error });
 
   return (
-    <div className="pt-24 pb-16">
+    <>
+      <SEO
+        title="Fantasy Liga Tabela - Trojka iz ćoška"
+        description="Pratite trenutnu tabelu fantasy košarkaške lige Trojka iz ćoška. Rezultati, raspored utakmica i statistike timova u realnom vremenu."
+        keywords="fantasy liga tabela, košarka rezultati, trojka iz ćoška liga, fantasy basketball standings, yahoo fantasy košarka"
+        url="/league"
+      />
+
+      <div className="pt-24 pb-16">
       <div className="container">
         <AnimatedSection className="mb-10 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-blue-600 mb-4">Trojka iz ćoška</h1>
@@ -99,7 +107,8 @@ const League: React.FC = () => {
 
         <UpcomingMatches matches={upcomingMatches} />
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 
