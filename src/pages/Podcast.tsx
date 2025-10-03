@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';  // Dodat useEffect u import (ovo je jedina izmena)
 import AnimatedSection from '../components/ui/AnimatedSection';
 import SEO from '../components/SEO';
 import StructuredData from '../components/StructuredData';
