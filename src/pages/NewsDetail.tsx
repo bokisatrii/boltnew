@@ -2,6 +2,9 @@ import { useParams, Link } from "react-router-dom";
 import { useEffect } from "react";
 import { ArrowLeft, Calendar, User } from "lucide-react";
 import AnimatedSection from "../components/ui/AnimatedSection";
+import SEO from "../components/SEO";
+import StructuredData from "../components/StructuredData";
+import Breadcrumb from "../components/ui/Breadcrumb";
 import { useBlogPost, useBlogPosts } from "../hooks/useBlog";
 
 // Function to render content with embedded images
@@ -31,11 +34,6 @@ const NewsDetail = () => {
   const { post, loading, error } = useBlogPost(slug || "");
   const { posts: allPosts } = useBlogPosts();
 
-  useEffect(() => {
-    if (post) {
-      document.title = `BasketLiga - ${post.naslov}`;
-    }
-  }, [post]);
 
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
@@ -94,15 +92,58 @@ const NewsDetail = () => {
     );
   }
 
-  // Get related articles (excluding current one)
+  // Get related articles (same categories, excluding current one)
   const relatedArticles = allPosts
-    .filter((article) => article.slug !== slug)
+    .filter((article) =>
+      article.slug !== slug &&
+      article.category.some(cat => post?.category.includes(cat))
+    )
     .slice(0, 3);
 
+  // If not enough related by category, fill with other recent articles
+  if (relatedArticles.length < 3) {
+    const additionalArticles = allPosts
+      .filter((article) =>
+        article.slug !== slug &&
+        !relatedArticles.find(rel => rel.slug === article.slug)
+      )
+      .slice(0, 3 - relatedArticles.length);
+    relatedArticles.push(...additionalArticles);
+  }
+
   return (
-    <div className="pt-24 pb-16">
+    <>
+      <SEO
+        title={`${post.naslov} | Trojka iz ćoška`}
+        description={post.tekst.slice(0, 155) + '...'}
+        keywords={`${post.category.join(', ')}, košarka vesti, trojka iz ćoška, ${post.naslov}`}
+        image={post.slika}
+        url={`/news/${post.slug}`}
+        type="article"
+        author={post.autor}
+        publishedTime={post.datum}
+        section={post.category[0]}
+        tags={post.category}
+      />
+      <StructuredData
+        type="article"
+        title={post.naslov}
+        description={post.tekst.slice(0, 200)}
+        image={post.slika}
+        datePublished={post.datum}
+        author={post.autor || 'Trojka iz ćoška'}
+        url={`https://trojkaizcoska.com/news/${post.slug}`}
+      />
+
+      <div className="pt-24 pb-16">
       <div className="container">
         <AnimatedSection>
+          {/* Breadcrumb */}
+          <Breadcrumb items={[
+            { name: 'Vesti', url: '/news' },
+            { name: post.naslov, url: `/news/${post.slug}` }
+          ]} />
+
           {/* Back link */}
           <div className="mb-6">
             <Link
@@ -119,7 +160,7 @@ const NewsDetail = () => {
             <div className="relative h-64 sm:h-96 overflow-hidden">
               <img
                 src={post.slika}
-                alt={post.naslov}
+                alt={`${post.naslov} - Košarkaška vest na Trojka iz ćoška`}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -157,7 +198,7 @@ const NewsDetail = () => {
         {relatedArticles.length > 0 && (
           <div className="mt-12">
             <h3 className="text-2xl font-bold text-gray-800 mb-6">
-              Pročitajte i
+              Slične vesti koje bi vas mogle zanimati
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedArticles.map((article, index) => (
@@ -203,7 +244,8 @@ const NewsDetail = () => {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

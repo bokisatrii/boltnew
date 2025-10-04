@@ -1,14 +1,19 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Telescope as Mail, MapPin, Phone } from 'lucide-react';
 import AnimatedSection from '../components/ui/AnimatedSection';
+import SEO from '../components/SEO';
 
 const Contact: React.FC = () => {
-  useEffect(() => {
-    document.title = 'BasketLiga - Kontakt';
-  }, []);
-
   return (
-    <div className="pt-24 pb-16">
+    <>
+      <SEO
+        title="Kontakt - Poručite nam | Trojka iz ćoška"
+        description="Stupite u kontakt sa timom Trojka iz ćoška. Imate pitanja o fantasy ligi, podcastu ili želite da postanete deo naše zajednice? Javite nam se!"
+        keywords="kontakt trojka iz ćoška, košarkaški podcast kontakt, fantasy liga kontakt, basketball podcast serbia contact"
+        url="/contact"
+      />
+
+      <div className="pt-24 pb-16">
       <div className="container">
         <AnimatedSection className="mb-10 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-blue-600 mb-4">Kontakt</h1>
@@ -150,16 +155,17 @@ const Contact: React.FC = () => {
               </div>
               
               <div className="mt-10">
-                <h3 className="text-lg font-semibold mb-4">O BasketLigi</h3>
+                <h3 className="text-lg font-semibold mb-4">O Trojka iz ćoška</h3>
                 <p className="text-blue-100">
-                  BasketLiga je profesionalna košarkaška liga osnovana 2025. godine sa ciljem da promoviše i razvija košarku u regionu. Kroz godine, liga je izrasla u prestižno takmičenje koje okuplja najbolje košarkaške ekipe i talente.
+                  Trojka iz ćoška je košarkaški podcast osnovan 2025. godine sa ciljem da promoviše i razvija košarku u regionu. Kroz epizode, podcast je izrastao u prestižnu platformu koja okuplja najbolje košarkaške analize i fantasy ligu.
                 </p>
               </div>
             </div>
           </AnimatedSection>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

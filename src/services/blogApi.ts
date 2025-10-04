@@ -133,11 +133,11 @@ export class BlogAPI {
     const rawMockData: RawBlogPost[] = [
       {
         id: "1",
-        naslov: "BasketLiga počinje spektakularno!",
+        naslov: "Trojka iz ćoška počinje spektakularno!",
         datum: "2025-06-17T10:00:00.000Z",
-        tekst: "Nakon dugotrajne pripreke, BasketLiga se vraća u velikom stilu! Očekuje nas nezaboravna sezona puna uzbuđenja, novih igrača i neverovatnih utakmica. Prijavite svoje timove i budite deo najveće fantasy košarkaške lige u regionu.",
+        tekst: "Nakon dugotrajne pripreke, Trojka iz ćoška se vraća u velikom stilu! Očekuje nas nezaboravna sezona puna uzbuđenja, novih igrača i neverovatnih utakmica. Prijavite svoje timove i budite deo najveće fantasy košarkaške lige u regionu.",
         slika: "https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        slug: "basketliga-pocinje-spektakularno",
+        slug: "trojka-iz-coska-pocinje-spektakularno",
         autor: "Bogdan Terzic",
         category: "fantasy,featured"
       },
@@ -145,10 +145,10 @@ export class BlogAPI {
         id: "2",
         naslov: "Noćna utakmica pod reflektorima",
         datum: "2025-06-15T20:00:00.000Z",
-        tekst: "Spektakl pod reflektorima! BasketLiga organizuje posebnu noćnu utakmicu na otvorenom u centru grada. Ovo će biti jedinstveno iskustvo za sve ljubitelje košarke - atmosfera, muzika i najbolji igrači na jednom mestu.",
+        tekst: "Spektakl pod reflektorima! Trojka iz ćoška organizuje posebnu noćnu utakmicu na otvorenom u centru grada. Ovo će biti jedinstveno iskustvo za sve ljubitelje košarke - atmosfera, muzika i najbolji igrači na jednom mestu.",
         slika: "https://images.unsplash.com/photo-1504450758481-7338eba7524a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
         slug: "nocna-utakmica-pod-reflektorima",
-        autor: "BasketLiga UO",
+        autor: "Trojka iz ćoška Tim",
         category: "events,nba"
       },
       {

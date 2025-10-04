@@ -97,7 +97,7 @@ const LatestNews: React.FC = () => {
         <AnimatedSection className="text-center mb-12">
           <h2 className="text-4xl font-bold text-blue-600 mb-4">Najnovije vesti</h2>
           <p className="max-w-2xl mx-auto text-lg text-gray-600">
-            Budite u toku sa najnovijim dešavanjima, rezultatima i informacijama iz BasketLige
+            Budite u toku sa najnovijim dešavanjima, rezultatima i informacijama iz Trojka iz ćoška
           </p>
         </AnimatedSection>
 
@@ -179,7 +179,7 @@ const LatestNews: React.FC = () => {
             to="/news"
             className="btn-primary px-8 py-3"
           >
-            Sve vesti
+            Pogledajte sve vesti
           </Link>
         </AnimatedSection>
       </div>

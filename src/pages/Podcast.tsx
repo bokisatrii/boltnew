@@ -1,5 +1,7 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';  // Dodat useEffect u import (ovo je jedina izmena)
 import AnimatedSection from '../components/ui/AnimatedSection';
+import SEO from '../components/SEO';
+import StructuredData from '../components/StructuredData';
 import { motion } from 'framer-motion';
 import { ExternalLink, Loader2, AlertCircle } from 'lucide-react';
 
@@ -147,41 +149,18 @@ const Podcast: React.FC = () => {
   const [spotifyLoaded, setSpotifyLoaded] = useState(false);
   const [archiveLoaded, setArchiveLoaded] = useState(false);
 
-  useEffect(() => {
-    // Enhanced SEO
-    document.title = 'BasketLiga - Trojka iz Ćoška Podcast | Najnovije Epizode';
-    
-    // Add meta tags for better SEO
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Slušajte najnovije epizode Trojka iz Ćoška podcasta. Košarka, NBA, analiza i diskusije - sve na jednom mestu!');
-    }
-
-    // Add structured data for better search visibility
-    const structuredData = {
-      "@context": "https://schema.org",
-      "@type": "PodcastSeries",
-      "name": "Trojka iz Ćoška",
-      "description": "Košarkaški podcast BasketLiga sajta",
-      "url": window.location.href,
-      "publisher": {
-        "@type": "Organization",
-        "name": "BasketLiga"
-      }
-    };
-
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.textContent = JSON.stringify(structuredData);
-    document.head.appendChild(script);
-
-    return () => {
-      document.head.removeChild(script);
-    };
-  }, []);
 
   return (
-    <div className="pt-24 pb-16 min-h-screen bg-gradient-to-b from-[#2D1810] to-[#3D2420]">
+    <>
+      <SEO
+        title="Trojka iz ćoška Podcast - Slušaj Najnovije Epizode"
+        description="Slušajte košarkaški podcast Trojka iz ćoška. Analize NBA utakmica, diskusije o Evroligi, fantasy saveti i intervjui. Dostupno na Spotify i Podcast.rs"
+        keywords="trojka iz ćoška podcast, košarkaški podcast srbija, NBA podcast, Evroliga podcast, basketball podcast, spotify podcast košarka"
+        url="/podcast"
+      />
+      <StructuredData type="podcast" />
+
+      <div className="pt-24 pb-16 min-h-screen bg-gradient-to-b from-[#2D1810] to-[#3D2420]">
       {/* Hero Section */}
       <section className="container text-center py-16">
         <AnimatedSection>
@@ -313,7 +292,8 @@ const Podcast: React.FC = () => {
           Spotify: {spotifyLoaded ? '✅' : '⏳'} | Archive: {archiveLoaded ? '✅' : '⏳'}
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 };
 

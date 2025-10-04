@@ -36,11 +36,11 @@ export default class ErrorBoundary extends Component<Props, State> {
             </p>
             <button
               onClick={() => window.location.reload()}
-              className="btn btn-primary mr-4"
+              className="btn-primary mr-4"
             >
               Osvežite stranicu
             </button>
-            <a href="/" className="btn btn-secondary">
+            <a href="/" className="btn-secondary">
               Idite na početnu
             </a>
             {process.env.NODE_ENV === 'development' && this.state.error && (
