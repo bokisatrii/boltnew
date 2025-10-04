@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Basketball, MapPin, Phone, Envelope as Mail, FacebookLogo, InstagramLogo, TwitterLogo } from '@phosphor-icons/react';
+import { Basketball, MapPin, Phone, Envelope as Mail, YoutubeLogo, InstagramLogo, TwitterLogo } from '@phosphor-icons/react';
 
 const Footer: React.FC = () => {
   return (
@@ -118,20 +118,30 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-lg font-bold mb-4 border-b border-gray-700 pb-2">Pratite nas</h3>
             <div className="flex space-x-4 mb-6">
-              <a href="#" className="bg-blue-800 hover:bg-blue-700 transition-colors p-2 rounded-full">
-                <FacebookLogo size={20} />
+              <a
+                href="https://www.youtube.com/@trojkaizcoska"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-red-600 hover:bg-red-500 transition-colors p-2 rounded-full"
+              >
+                <YoutubeLogo size={20} />
               </a>
-            
-                <a
-  href="https://www.instagram.com/trojkaizcoska_"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="bg-pink-700 hover:bg-pink-600 transition-colors p-2 rounded-full"
->
-                  
-  <InstagramLogo size={20} />
-</a>
-              <a href="https://www.instagram.com/trojkaizcoska_" className="bg-blue-500 hover:bg-blue-400 transition-colors p-2 rounded-full">
+
+              <a
+                href="https://www.instagram.com/trojkaizcoska_"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-pink-700 hover:bg-pink-600 transition-colors p-2 rounded-full"
+              >
+                <InstagramLogo size={20} />
+              </a>
+
+              <a
+                href="https://www.instagram.com/trojkaizcoska_"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-blue-500 hover:bg-blue-400 transition-colors p-2 rounded-full"
+              >
                 <TwitterLogo size={20} />
               </a>
             </div>
