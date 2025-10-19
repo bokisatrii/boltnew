@@ -30,7 +30,8 @@
     "puppeteerExecutablePath": "google-chrome-stable",
     "puppeteerArgs": [
       "--no-sandbox",
-      "--disable-setuid-sandbox"
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage"
     ]
   },
   "dependencies": {
