@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "reactSnap": {
+    "source": "dist",
     "inlineCss": true,
     "minifyHtml": {
       "collapseWhitespace": false,
