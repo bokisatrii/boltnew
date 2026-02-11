@@ -13,9 +13,9 @@ const SkeletonLoader: React.FC<{ className?: string }> = ({ className = "" }) =>
 );
 
 // Error Fallback Component
-const ErrorFallback: React.FC<{ onRetry?: () => void; message?: string }> = ({ 
-  onRetry, 
-  message = "Sadržaj se nije mogao učitati" 
+const ErrorFallback: React.FC<{ onRetry?: () => void; message?: string }> = ({
+  onRetry,
+  message = "Content could not be loaded"
 }) => (
   <div className="flex flex-col items-center justify-center p-8 bg-[#3D2420]/50 rounded-2xl border border-[#CD853F]/20">
     <AlertCircle className="w-12 h-12 text-[#CD853F] mb-4" />
@@ -25,7 +25,7 @@ const ErrorFallback: React.FC<{ onRetry?: () => void; message?: string }> = ({
         onClick={onRetry}
         className="px-4 py-2 bg-[#D2691E] hover:bg-[#CD853F] text-white rounded-lg transition-colors duration-200"
       >
-        Pokušaj ponovo
+        Try Again
       </button>
     )}
   </div>
@@ -108,7 +108,7 @@ const IframeWithLoading: React.FC<{
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="flex items-center gap-2 text-[#CD853F]">
                   <Loader2 className="w-6 h-6 animate-spin" />
-                  <span>Učitava se...</span>
+                  <span>Loading...</span>
                 </div>
               </div>
             </div>
@@ -131,9 +131,9 @@ const IframeWithLoading: React.FC<{
       
       {hasError && (
         <div className="absolute inset-0">
-          <ErrorFallback 
+          <ErrorFallback
             onRetry={handleRetry}
-            message="Podcast se nije mogao učitati. Proverite internetsku vezu."
+            message="Podcast could not load. Check your internet connection."
           />
         </div>
       )}
@@ -153,9 +153,9 @@ const Podcast: React.FC = () => {
   return (
     <>
       <SEO
-        title="Trojka iz ćoška Podcast - Slušaj Najnovije Epizode"
-        description="Slušajte košarkaški podcast Trojka iz ćoška. Analize NBA utakmica, diskusije o Evroligi, fantasy saveti i intervjui. Dostupno na Spotify i Podcast.rs"
-        keywords="trojka iz ćoška podcast, košarkaški podcast srbija, NBA podcast, Evroliga podcast, basketball podcast, spotify podcast košarka"
+        title="Three From The Corner Podcast - Listen to Latest Episodes"
+        description="Listen to the Three From The Corner basketball podcast. NBA game analysis, Euroleague discussions, fantasy tips and interviews. Available on Spotify and Podcast.rs"
+        keywords="three from the corner podcast, basketball podcast, NBA podcast, Euroleague podcast, basketball podcast, spotify basketball podcast"
         url="/podcast"
       />
       <StructuredData type="podcast" />
@@ -170,7 +170,7 @@ const Podcast: React.FC = () => {
             transition={{ duration: 0.6 }}
             className="text-4xl md:text-6xl font-bold text-[#D2691E] mb-6"
           >
-            Trojka iz Ćoška
+            Three From The Corner
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
@@ -178,7 +178,7 @@ const Podcast: React.FC = () => {
             transition={{ delay: 0.2, duration: 0.6 }}
             className="text-lg md:text-xl text-[#CD853F] max-w-2xl mx-auto mb-8"
           >
-            Slušajte najnovije epizode našeg podcasta direktno na sajtu!
+            Listen to the latest episodes of our podcast directly on the site!
           </motion.p>
           
           {/* Spotify Player with Enhanced Loading */}
@@ -195,7 +195,7 @@ const Podcast: React.FC = () => {
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="flex items-center gap-2 text-[#CD853F]">
                     <Loader2 className="w-6 h-6 animate-spin" />
-                    <span>Učitava se...</span>
+                    <span>Loading...</span>
                   </div>
                 </div>
               </div>
@@ -203,7 +203,7 @@ const Podcast: React.FC = () => {
             
             {/* Original Spotify iframe - maintains aspect ratio */}
             <iframe
-              title="Trojka iz Ćoška - Spotify Podcast Player"
+              title="Three From The Corner - Spotify Podcast Player"
               src="https://open.spotify.com/embed/show/3bkhQToL2N4YJ5I2jSopfZ/video?utm_source=generator&theme=0"
               width="100%"
               height="100%"
@@ -228,7 +228,7 @@ const Podcast: React.FC = () => {
               className="group px-6 py-3 text-white bg-[#D2691E] hover:bg-[#CD853F] rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-2"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Slušaj na Spotify"
+              aria-label="Listen on Spotify"
             >
               <span>Spotify</span>
               <ExternalLink className="w-4 h-4 group-hover:rotate-12 transition-transform duration-200" />
@@ -238,7 +238,7 @@ const Podcast: React.FC = () => {
               className="group px-6 py-3 text-white bg-[#8B4513] hover:bg-[#A0522D] rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-2"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Slušaj na Podcast.rs"
+              aria-label="Listen on Podcast.rs"
             >
               <span>Podcast.rs</span>
               <ExternalLink className="w-4 h-4 group-hover:rotate-12 transition-transform duration-200" />
@@ -256,7 +256,7 @@ const Podcast: React.FC = () => {
             transition={{ duration: 0.6 }}
             className="text-3xl font-bold text-[#D2691E] mb-4"
           >
-            📚 Arhiva svih epizoda
+            📚 All Episodes Archive
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
@@ -264,7 +264,7 @@ const Podcast: React.FC = () => {
             transition={{ delay: 0.2, duration: 0.6 }}
             className="text-[#CD853F] mb-6"
           >
-            Slušaj sve epizode ovde ili na Spotify
+            Listen to all episodes here or on Spotify
           </motion.p>
           
           {/* Responsive Archive Widget */}
@@ -276,7 +276,7 @@ const Podcast: React.FC = () => {
           >
             <IframeWithLoading
               src="https://widgets.sociablekit.com/spotify-podcast/iframe/25576861"
-              title="Trojka iz Ćoška - Arhiva svih epizoda"
+              title="Three From The Corner - All Episodes Archive"
               height="1000"
               className="w-full"
               lazy={true} // Archive loads when user scrolls

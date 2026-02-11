@@ -41,7 +41,7 @@ const NewsDetail = () => {
       month: "long",
       day: "numeric",
     };
-    return new Date(dateString).toLocaleDateString("sr-RS", options);
+    return new Date(dateString).toLocaleDateString("en-US", options);
   };
 
   const renderCategoryBadges = (categories: string[]) => {
@@ -65,7 +65,7 @@ const NewsDetail = () => {
         <div className="container">
           <div className="text-center py-20">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Učitavanje članka...</p>
+            <p className="text-gray-600">Loading article...</p>
           </div>
         </div>
       </div>
@@ -78,13 +78,13 @@ const NewsDetail = () => {
         <div className="container">
           <div className="text-center py-20">
             <h1 className="text-4xl font-bold text-gray-800 mb-4">
-              Članak nije pronađen
+              Article Not Found
             </h1>
             <p className="text-gray-600 mb-8">
-              {error || "Članak koji tražite ne postoji ili je uklonjen."}
+              {error || "The article you are looking for does not exist or has been removed."}
             </p>
             <Link to="/news" className="btn-primary">
-              Nazad na vesti
+              Back to News
             </Link>
           </div>
         </div>
@@ -114,9 +114,9 @@ const NewsDetail = () => {
   return (
     <>
       <SEO
-        title={`${post.naslov} | Trojka iz ćoška`}
+        title={`${post.naslov} | Three From The Corner`}
         description={post.tekst.slice(0, 155) + '...'}
-        keywords={`${post.category.join(', ')}, košarka vesti, trojka iz ćoška, ${post.naslov}`}
+        keywords={`${post.category.join(', ')}, basketball news, three from the corner, ${post.naslov}`}
         image={post.slika}
         url={`/news/${post.slug}`}
         type="article"
@@ -131,7 +131,7 @@ const NewsDetail = () => {
         description={post.tekst.slice(0, 200)}
         image={post.slika}
         datePublished={post.datum}
-        author={post.autor || 'Trojka iz ćoška'}
+        author={post.autor || 'Three From The Corner'}
         url={`https://trojkaizcoska.com/news/${post.slug}`}
       />
 
@@ -140,7 +140,7 @@ const NewsDetail = () => {
         <AnimatedSection>
           {/* Breadcrumb */}
           <Breadcrumb items={[
-            { name: 'Vesti', url: '/news' },
+            { name: 'News', url: '/news' },
             { name: post.naslov, url: `/news/${post.slug}` }
           ]} />
 
@@ -151,7 +151,7 @@ const NewsDetail = () => {
               className="inline-flex items-center text-blue-600 hover:text-blue-800"
             >
               <ArrowLeft size={18} className="mr-2" />
-              Nazad na sve vesti
+              Back to All News
             </Link>
           </div>
 
@@ -160,7 +160,7 @@ const NewsDetail = () => {
             <div className="relative h-64 sm:h-96 overflow-hidden">
               <img
                 src={post.slika}
-                alt={`${post.naslov} - Košarkaška vest na Trojka iz ćoška`}
+                alt={`${post.naslov} - Basketball news on Three From The Corner`}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -198,7 +198,7 @@ const NewsDetail = () => {
         {relatedArticles.length > 0 && (
           <div className="mt-12">
             <h3 className="text-2xl font-bold text-gray-800 mb-6">
-              Slične vesti koje bi vas mogle zanimati
+              Related News You Might Be Interested In
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedArticles.map((article, index) => (

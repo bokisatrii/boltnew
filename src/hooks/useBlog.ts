@@ -22,7 +22,7 @@ export function useBlogPosts() {
       } catch (e) {
         if (!isCancelled) {
           console.error('Error loading blog posts:', e);
-          setError('Greška pri učitavanju vesti');
+          setError('Error loading news');
         }
       } finally {
         if (!isCancelled) {
@@ -47,7 +47,7 @@ export function useBlogPosts() {
       setPosts(fetchedPosts);
     } catch (e) {
       console.error('Error refetching blog posts:', e);
-      setError('Greška pri učitavanju vesti');
+      setError('Error loading news');
     } finally {
       setLoading(false);
     }
@@ -77,15 +77,16 @@ export function useBlogPost(slug: string) {
         
         if (!isCancelled) {
           setPost(fetchedPost);
-          
+
+
           if (!fetchedPost) {
-            setError('Članak nije pronađen');
+            setError('Article not found');
           }
         }
       } catch (e) {
         if (!isCancelled) {
           console.error('Error loading blog post:', e);
-          setError('Greška pri učitavanju članka');
+          setError('Error loading article');
         }
       } finally {
         if (!isCancelled) {
@@ -125,7 +126,7 @@ export function useBlogPostsByCategory(category: string) {
       } catch (e) {
         if (!isCancelled) {
           console.error('Error loading posts by category:', e);
-          setError('Greška pri učitavanju vesti');
+          setError('Error loading news');
         }
       } finally {
         if (!isCancelled) {

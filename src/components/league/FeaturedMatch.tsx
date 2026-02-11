@@ -16,15 +16,15 @@ const FeaturedMatch: React.FC<FeaturedMatchProps> = ({ match }) => {
       month: 'long',
       day: 'numeric',
     };
-    return new Date(dateString).toLocaleDateString('sr-RS', options);
+    return new Date(dateString).toLocaleDateString('en-US', options);
   };
 
   return (
     <section className="my-12">
       <AnimatedSection className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-800 mb-2">Istaknuta utakmica</h2>
+        <h2 className="text-3xl font-bold text-gray-800 mb-2">Featured Match</h2>
         <p className="text-gray-600">
-          Ne propustite ovu uzbudljivu utakmicu
+          Don't miss this exciting match
         </p>
       </AnimatedSection>
 
@@ -51,7 +51,7 @@ const FeaturedMatch: React.FC<FeaturedMatchProps> = ({ match }) => {
                 </div>
               </div>
               <h3 className="text-xl md:text-2xl font-bold">{match.homeTeam.name}</h3>
-              <div className="text-blue-200 font-medium">Domaćin</div>
+              <div className="text-blue-200 font-medium">Home</div>
             </motion.div>
 
             {/* Center info */}
@@ -95,20 +95,20 @@ const FeaturedMatch: React.FC<FeaturedMatchProps> = ({ match }) => {
                 </div>
               </div>
               <h3 className="text-xl md:text-2xl font-bold">{match.awayTeam.name}</h3>
-              <div className="text-blue-200 font-medium">Gost</div>
+              <div className="text-blue-200 font-medium">Away</div>
             </motion.div>
           </div>
         </div>
 
         <div className="bg-blue-900 p-4 md:p-6 flex justify-between items-center">
           <div className="text-white text-lg font-medium">
-            Ne propustite ovo!
+            Don't miss this!
           </div>
-          <a 
-            href="#" 
+          <a
+            href="#"
             className="btn bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-md shadow-md inline-flex items-center"
           >
-            Rezerviši karte
+            Reserve Tickets
           </a>
         </div>
       </div>

@@ -206,7 +206,7 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
       <AnimatedSection className="overflow-hidden rounded-lg shadow">
         <div className="bg-white p-8 text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Učitavanje podataka o tabeli...</p>
+          <p className="text-gray-600">Loading standings data...</p>
         </div>
       </AnimatedSection>
     );
@@ -217,8 +217,8 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
     return (
       <AnimatedSection className="overflow-hidden rounded-lg shadow">
         <div className="bg-red-50 border border-red-200 p-8 text-center rounded-lg">
-          <p className="text-red-600 mb-4">Greška pri učitavanju podataka: {error}</p>
-          <p className="text-sm text-red-500">Prikazuju se rezervni podaci.</p>
+          <p className="text-red-600 mb-4">Error loading data: {error}</p>
+          <p className="text-sm text-red-500">Showing fallback data.</p>
         </div>
       </AnimatedSection>
     );
@@ -229,7 +229,7 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
     return (
       <AnimatedSection className="overflow-hidden rounded-lg shadow">
         <div className="bg-yellow-50 border border-yellow-200 p-8 text-center rounded-lg">
-          <p className="text-yellow-600">Nema podataka za prikaz.</p>
+          <p className="text-yellow-600">No data to display.</p>
         </div>
       </AnimatedSection>
     );
@@ -241,12 +241,12 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
       <AnimatedSection>
         <div className="mb-4">
           <div className="flex items-center justify-between bg-blue-600 text-white p-3 rounded-t-lg">
-            <h3 className="font-semibold">Tabela lige</h3>
+            <h3 className="font-semibold">League Standings</h3>
             <button
               onClick={() => sortTeams('rank')}
               className="text-sm bg-blue-700 px-3 py-1 rounded hover:bg-blue-800 transition-colors"
             >
-              Sortiraj po ranku {getSortIcon('rank')}
+              Sort by Rank {getSortIcon('rank')}
             </button>
           </div>
         </div>
@@ -258,10 +258,10 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
         <div className="bg-gray-50 px-4 py-3 text-xs text-gray-500 rounded-b-lg mt-4">
           <div className="flex items-center mb-2">
             <span className="inline-block mr-2 bg-green-500 w-3 h-3 rounded-full"></span>
-            <span>Plasirali se u playoff (*)</span>
+            <span>Clinched Playoff (*)</span>
           </div>
           <div className="text-right">
-            Ažurirano: {new Date().toLocaleString('sr-RS')}
+            Updated: {new Date().toLocaleString('en-US')}
           </div>
         </div>
       </AnimatedSection>
@@ -276,12 +276,12 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
           <thead className="bg-blue-600 text-white sticky top-0 z-40">
             <tr>
               <th className="px-4 py-5 font-semibold text-sm text-center min-w-[44px]">#</th>
-              <th 
+              <th
                 className="px-4 py-5 font-semibold text-sm cursor-pointer hover:bg-blue-700 transition-colors min-w-[44px]"
                 onClick={() => sortTeams('name')}
               >
                 <div className="flex items-center space-x-1">
-                  <span>Ekipa</span>
+                  <span>Team</span>
                   {getSortIcon('name')}
                 </div>
               </th>
@@ -289,7 +289,7 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
                 className="px-4 py-5 font-semibold text-sm text-center cursor-pointer hover:bg-blue-700 transition-colors min-w-[44px]"
                 onClick={() => sortTeams('wins')}
               >
-                <Tooltip text="Pobede-Porazi-Nerešeno" id="wlt">
+                <Tooltip text="Wins-Losses-Ties" id="wlt">
                   <div className="flex items-center justify-center space-x-1">
                     <span>W-L-T</span>
                     {getSortIcon('wins')}
@@ -301,7 +301,7 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
                 className="px-4 py-5 font-semibold text-sm text-center cursor-pointer hover:bg-blue-700 transition-colors min-w-[44px]"
                 onClick={() => sortTeams('pct')}
               >
-                <Tooltip text="Procenat pobeda" id="pct">
+                <Tooltip text="Win Percentage" id="pct">
                   <div className="flex items-center justify-center space-x-1">
                     <span>PCT</span>
                     {getSortIcon('pct')}
@@ -313,7 +313,7 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
                 className="px-4 py-5 font-semibold text-sm text-center cursor-pointer hover:bg-blue-700 transition-colors min-w-[44px]"
                 onClick={() => sortTeams('gb')}
               >
-                <Tooltip text="Razlika od prvog mesta" id="gb">
+                <Tooltip text="Games Behind" id="gb">
                   <div className="flex items-center justify-center space-x-1">
                     <span>GB</span>
                     {getSortIcon('gb')}
@@ -322,7 +322,7 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
                 </Tooltip>
               </th>
               <th className="px-4 py-5 font-semibold text-sm text-center min-w-[44px]">
-                <Tooltip text="Prošla nedelja" id="lastweek">
+                <Tooltip text="Last Week" id="lastweek">
                   <div className="flex items-center justify-center space-x-1">
                     <span>LW</span>
                     <HelpCircle size={14} className="opacity-70" />
@@ -330,7 +330,7 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
                 </Tooltip>
               </th>
               <th className="px-4 py-5 font-semibold text-sm text-center min-w-[44px]">
-                <Tooltip text="Waiver pozicija" id="waiver">
+                <Tooltip text="Waiver Position" id="waiver">
                   <div className="flex items-center justify-center space-x-1">
                     <span>W#</span>
                     <HelpCircle size={14} className="opacity-70" />
@@ -411,10 +411,10 @@ const StandingsTable: React.FC<StandingsTableProps> = ({ teams: initialTeams, lo
       <div className="bg-gray-50 px-4 py-3 text-xs text-gray-500 flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center">
           <span className="inline-block mr-2 bg-green-500 w-3 h-3 rounded-full"></span>
-          <span className="mr-4">Plasirali se u playoff (*)</span>
+          <span className="mr-4">Clinched Playoff (*)</span>
         </div>
         <div className="text-right">
-          Poslednje ažuriranje: {new Date().toLocaleString('sr-RS')}
+          Last Updated: {new Date().toLocaleString('en-US')}
         </div>
       </div>
     </AnimatedSection>

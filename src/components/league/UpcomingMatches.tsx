@@ -15,7 +15,7 @@ const UpcomingMatches: React.FC<UpcomingMatchesProps> = ({ matches }) => {
       month: 'long',
       day: 'numeric',
     };
-    return new Date(dateString).toLocaleDateString('sr-RS', options);
+    return new Date(dateString).toLocaleDateString('en-US', options);
   };
 
   // Group matches by date
@@ -36,9 +36,9 @@ const UpcomingMatches: React.FC<UpcomingMatchesProps> = ({ matches }) => {
   return (
     <section className="my-12">
       <AnimatedSection className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-800 mb-2">Predstojeće utakmice</h2>
+        <h2 className="text-3xl font-bold text-gray-800 mb-2">Upcoming Matches</h2>
         <p className="text-gray-600">
-          Raspored nadolazećih utakmica BasketLige
+          Schedule of upcoming league matches
         </p>
       </AnimatedSection>
 

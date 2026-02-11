@@ -7,18 +7,18 @@ const Register: React.FC = () => {
   return (
     <>
       <SEO
-        title="Prijava Ekipe - Pridružite se Fantasy Ligi | Trojka iz ćoška"
-        description="Prijavite svoju ekipu za fantasy košarkašku ligu Trojka iz ćoška. Takmičite se sa najboljim igračima u regionu i osvajajte nagrade."
-        keywords="prijava ekipe, fantasy liga registracija, košarkaška liga, trojka iz ćoška prijava, fantasy basketball registration"
+        title="Team Registration - Join Fantasy League | Three From The Corner"
+        description="Register your team for the Three From The Corner fantasy basketball league. Compete with the best players and win prizes."
+        keywords="team registration, fantasy league registration, basketball league, three from the corner registration, fantasy basketball registration"
         url="/register"
       />
 
       <div className="pt-24 pb-16">
       <div className="container">
         <AnimatedSection className="mb-10 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-blue-600 mb-4">Prijava ekipe</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-blue-600 mb-4">Team Registration</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Popunite formular da prijavite svoju ekipu za takmičenje u Trojka iz ćoška
+            Fill out the form to register your team for competition in Three From The Corner
           </p>
         </AnimatedSection>
 

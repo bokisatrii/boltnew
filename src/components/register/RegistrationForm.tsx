@@ -62,9 +62,9 @@ const RegistrationForm: React.FC = () => {
                 <Check className="h-8 w-8 text-green-500" />
               </div>
               <div className="ml-4">
-                <h3 className="text-lg font-medium text-green-800">Uspešna prijava!</h3>
+                <h3 className="text-lg font-medium text-green-800">Successful Registration!</h3>
                 <p className="mt-2 text-green-700">
-                  Vaša ekipa je uspešno prijavljena za Trojka iz ćoška. Uskoro ćemo vas kontaktirati sa detaljima.
+                  Your team has been successfully registered for Three From The Corner. We will contact you soon with details.
                 </p>
               </div>
             </div>
@@ -75,19 +75,19 @@ const RegistrationForm: React.FC = () => {
               {/* Team Information */}
               <div className="mb-8">
                 <h3 className="text-xl font-bold text-gray-800 mb-4 pb-2 border-b border-gray-200">
-                  Informacije o ekipi
+                  Team Information
                 </h3>
                 
                 <div className="form-control">
                   <label htmlFor="teamName" className="form-label">
-                    Ime ekipe <span className="text-red-500">*</span>
+                    Team Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="teamName"
                     type="text"
                     className={`form-input ${errors.teamName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                    placeholder="Unesite ime ekipe"
-                    {...register('teamName', { required: 'Ime ekipe je obavezno' })}
+                    placeholder="Enter team name"
+                    {...register('teamName', { required: 'Team name is required' })}
                   />
                   {errors.teamName && (
                     <p className="form-error">{errors.teamName.message}</p>
@@ -96,7 +96,7 @@ const RegistrationForm: React.FC = () => {
                 
                 <div className="form-control">
                   <label htmlFor="playerCount" className="form-label">
-                    Broj igrača <span className="text-red-500">*</span>
+                    Number of Players <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="playerCount"
@@ -104,11 +104,11 @@ const RegistrationForm: React.FC = () => {
                     min="5"
                     max="15"
                     className={`form-input ${errors.playerCount ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                    placeholder="Unesite broj igrača"
-                    {...register('playerCount', { 
-                      required: 'Broj igrača je obavezan',
-                      min: { value: 5, message: 'Minimalno 5 igrača' },
-                      max: { value: 15, message: 'Maksimalno 15 igrača' }
+                    placeholder="Enter number of players"
+                    {...register('playerCount', {
+                      required: 'Number of players is required',
+                      min: { value: 5, message: 'Minimum 5 players' },
+                      max: { value: 15, message: 'Maximum 15 players' }
                     })}
                   />
                   {errors.playerCount && (
@@ -117,16 +117,16 @@ const RegistrationForm: React.FC = () => {
                 </div>
                 
                 <div className="form-control">
-                  <label className="form-label">Logo ekipe</label>
+                  <label className="form-label">Team Logo</label>
                   <div className="flex items-center space-x-4">
                     <div className="flex-1">
-                      <label 
+                      <label
                         htmlFor="logo"
                         className="cursor-pointer block w-full p-3 border border-gray-300 border-dashed rounded-lg text-center hover:bg-gray-50 transition-colors"
                       >
                         <Upload className="mx-auto h-8 w-8 text-gray-400 mb-2" />
                         <span className="text-gray-600">
-                          {selectedFile ? selectedFile.name : 'Kliknite za upload logo-a'}
+                          {selectedFile ? selectedFile.name : 'Click to upload logo'}
                         </span>
                         <input
                           id="logo"
@@ -156,7 +156,7 @@ const RegistrationForm: React.FC = () => {
                     )}
                   </div>
                   <p className="mt-1 text-sm text-gray-500">
-                    PNG, JPG ili GIF do 2MB
+                    PNG, JPG or GIF up to 2MB
                   </p>
                 </div>
               </div>
@@ -164,19 +164,19 @@ const RegistrationForm: React.FC = () => {
               {/* Contact Information */}
               <div className="mb-8">
                 <h3 className="text-xl font-bold text-gray-800 mb-4 pb-2 border-b border-gray-200">
-                  Kontakt informacije
+                  Contact Information
                 </h3>
                 
                 <div className="form-control">
                   <label htmlFor="captainName" className="form-label">
-                    Ime i prezime kapitena <span className="text-red-500">*</span>
+                    Captain's Full Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="captainName"
                     type="text"
                     className={`form-input ${errors.captainName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                    placeholder="Unesite ime i prezime kapitena"
-                    {...register('captainName', { required: 'Ime kapitena je obavezno' })}
+                    placeholder="Enter captain's full name"
+                    {...register('captainName', { required: 'Captain name is required' })}
                   />
                   {errors.captainName && (
                     <p className="form-error">{errors.captainName.message}</p>
@@ -191,12 +191,12 @@ const RegistrationForm: React.FC = () => {
                     id="email"
                     type="email"
                     className={`form-input ${errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                    placeholder="Unesite email adresu"
-                    {...register('email', { 
-                      required: 'Email je obavezan',
-                      pattern: { 
+                    placeholder="Enter email address"
+                    {...register('email', {
+                      required: 'Email is required',
+                      pattern: {
                         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                        message: 'Unesite validnu email adresu'
+                        message: 'Enter a valid email address'
                       }
                     })}
                   />
@@ -207,14 +207,14 @@ const RegistrationForm: React.FC = () => {
                 
                 <div className="form-control">
                   <label htmlFor="phone" className="form-label">
-                    Telefon <span className="text-red-500">*</span>
+                    Phone <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="phone"
                     type="tel"
                     className={`form-input ${errors.phone ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                    placeholder="Unesite kontakt telefon"
-                    {...register('phone', { required: 'Telefon je obavezan' })}
+                    placeholder="Enter contact phone"
+                    {...register('phone', { required: 'Phone is required' })}
                   />
                   {errors.phone && (
                     <p className="form-error">{errors.phone.message}</p>
@@ -226,13 +226,13 @@ const RegistrationForm: React.FC = () => {
               <div className="mb-8">
                 <div className="form-control">
                   <label htmlFor="message" className="form-label">
-                    Dodatne napomene
+                    Additional Notes
                   </label>
                   <textarea
                     id="message"
                     rows={4}
                     className="form-input resize-none"
-                    placeholder="Unesite dodatne napomene ili zahteve..."
+                    placeholder="Enter additional notes or requirements..."
                     {...register('message')}
                   ></textarea>
                 </div>
@@ -243,7 +243,7 @@ const RegistrationForm: React.FC = () => {
                   type="submit"
                   className="btn-primary px-8 py-3 text-lg shadow-lg hover:shadow-blue-500/20"
                 >
-                  Prijavi ekipu
+                  Register Team
                 </button>
               </div>
             </form>

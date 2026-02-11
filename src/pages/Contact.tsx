@@ -7,40 +7,40 @@ const Contact: React.FC = () => {
   return (
     <>
       <SEO
-        title="Kontakt - Poručite nam | Trojka iz ćoška"
-        description="Stupite u kontakt sa timom Trojka iz ćoška. Imate pitanja o fantasy ligi, podcastu ili želite da postanete deo naše zajednice? Javite nam se!"
-        keywords="kontakt trojka iz ćoška, košarkaški podcast kontakt, fantasy liga kontakt, basketball podcast serbia contact"
+        title="Contact - Get in Touch | Three From The Corner"
+        description="Get in touch with the Three From The Corner team. Have questions about the fantasy league, podcast, or want to become part of our community? Contact us!"
+        keywords="contact three from the corner, basketball podcast contact, fantasy league contact, basketball podcast contact"
         url="/contact"
       />
 
       <div className="pt-24 pb-16">
       <div className="container">
         <AnimatedSection className="mb-10 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-blue-600 mb-4">Kontakt</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-blue-600 mb-4">Contact</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Imate pitanje ili predlog? Kontaktirajte nas!
+            Have a question or suggestion? Contact us!
           </p>
         </AnimatedSection>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <AnimatedSection className="order-2 md:order-1">
             <div className="bg-white rounded-lg shadow-lg p-8 h-full">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">Pošaljite nam poruku</h2>
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">Send us a message</h2>
               
               <form className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="form-control">
                     <label htmlFor="name" className="form-label">
-                      Ime i prezime
+                      Full Name
                     </label>
                     <input
                       id="name"
                       type="text"
                       className="form-input"
-                      placeholder="Vaše ime i prezime"
+                      placeholder="Your full name"
                     />
                   </div>
-                  
+
                   <div className="form-control">
                     <label htmlFor="email" className="form-label">
                       Email
@@ -49,32 +49,32 @@ const Contact: React.FC = () => {
                       id="email"
                       type="email"
                       className="form-input"
-                      placeholder="Vaša email adresa"
+                      placeholder="Your email address"
                     />
                   </div>
                 </div>
                 
                 <div className="form-control">
                   <label htmlFor="subject" className="form-label">
-                    Naslov
+                    Subject
                   </label>
                   <input
                     id="subject"
                     type="text"
                     className="form-input"
-                    placeholder="Naslov vaše poruke"
+                    placeholder="Subject of your message"
                   />
                 </div>
-                
+
                 <div className="form-control">
                   <label htmlFor="message" className="form-label">
-                    Poruka
+                    Message
                   </label>
                   <textarea
                     id="message"
                     rows={5}
                     className="form-input resize-none"
-                    placeholder="Unesite vašu poruku..."
+                    placeholder="Enter your message..."
                   ></textarea>
                 </div>
                 
@@ -83,7 +83,7 @@ const Contact: React.FC = () => {
                     type="submit"
                     className="btn-primary w-full sm:w-auto"
                   >
-                    Pošalji poruku
+                    Send Message
                   </button>
                 </div>
               </form>
@@ -92,7 +92,7 @@ const Contact: React.FC = () => {
           
           <AnimatedSection className="order-1 md:order-2">
             <div className="bg-blue-600 text-white rounded-lg shadow-lg p-8 h-full">
-              <h2 className="text-2xl font-bold mb-6">Informacije o kontaktu</h2>
+              <h2 className="text-2xl font-bold mb-6">Contact Information</h2>
               
               <div className="space-y-6">
                 <div className="flex items-start">
@@ -100,11 +100,11 @@ const Contact: React.FC = () => {
                     <MapPin className="w-6 h-6 text-orange-400" />
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-lg font-semibold">Adresa</h3>
+                    <h3 className="text-lg font-semibold">Address</h3>
                     <p className="mt-1 text-blue-100">
                       Sportska 123<br />
-                      11000 Beograd<br />
-                      Srbija
+                      11000 Belgrade<br />
+                      Serbia
                     </p>
                   </div>
                 </div>
@@ -114,7 +114,7 @@ const Contact: React.FC = () => {
                     <Phone className="w-6 h-6 text-orange-400" />
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-lg font-semibold">Telefon</h3>
+                    <h3 className="text-lg font-semibold">Phone</h3>
                     <p className="mt-1 text-blue-100">
                       +381 11 123 4567<br />
                       +381 63 789 4561
@@ -137,27 +137,27 @@ const Contact: React.FC = () => {
               </div>
               
               <div className="mt-10">
-                <h3 className="text-lg font-semibold mb-4">Radno vreme</h3>
+                <h3 className="text-lg font-semibold mb-4">Office Hours</h3>
                 <ul className="space-y-2">
                   <li className="flex justify-between">
-                    <span>Ponedeljak - Petak:</span>
+                    <span>Monday - Friday:</span>
                     <span>09:00 - 17:00</span>
                   </li>
                   <li className="flex justify-between">
-                    <span>Subota:</span>
+                    <span>Saturday:</span>
                     <span>10:00 - 14:00</span>
                   </li>
                   <li className="flex justify-between">
-                    <span>Nedelja:</span>
-                    <span>Zatvoreno</span>
+                    <span>Sunday:</span>
+                    <span>Closed</span>
                   </li>
                 </ul>
               </div>
               
               <div className="mt-10">
-                <h3 className="text-lg font-semibold mb-4">O Trojka iz ćoška</h3>
+                <h3 className="text-lg font-semibold mb-4">About Three From The Corner</h3>
                 <p className="text-blue-100">
-                  Trojka iz ćoška je košarkaški podcast osnovan 2025. godine sa ciljem da promoviše i razvija košarku u regionu. Kroz epizode, podcast je izrastao u prestižnu platformu koja okuplja najbolje košarkaške analize i fantasy ligu.
+                  Three From The Corner is a basketball podcast founded in 2025 with the goal of promoting and developing basketball. Through episodes, the podcast has grown into a prestigious platform that brings together the best basketball analysis and fantasy league.
                 </p>
               </div>
             </div>
