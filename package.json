@@ -1,7 +1,7 @@
 {
-  "name": "trojka-iz-coska-website",
+  "name": "corner-three-website",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -23,7 +23,17 @@
       "/news",
       "/podcast",
       "/register",
-      "/contact"
+      "/contact",
+      "/nba",
+      "/europe",
+      "/tv",
+      "/cornerthree",
+      "/ncaa/prospect-watch",
+      "/ncaa/what-is-nil",
+      "/fantasy/updates",
+      "/fantasy/division-1",
+      "/fantasy/division-2",
+      "/fantasy/wtf-is-fantasy"
     ],
     "skipThirdPartyRequests": true,
     "cacheAjaxRequests": false,
