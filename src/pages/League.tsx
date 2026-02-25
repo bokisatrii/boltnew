@@ -33,13 +33,12 @@ const League: React.FC = () => {
         console.warn('No data received, using static fallback');
         const staticData = getStaticTeamsData();
         setTeams(staticData);
-        setError('Koriste se rezervni podaci');
+        setError('Using backup data');
       }
     } catch (err) {
       console.error('Failed to fetch Yahoo Fantasy data:', err);
-      setError(err instanceof Error ? err.message : 'Nepoznata greška');
+      setError(err instanceof Error ? err.message : 'Unknown error');
       
-      // Fallback to static data
       const staticData = getStaticTeamsData();
       setTeams(staticData);
       console.log('Using static fallback data due to error');
@@ -52,61 +51,59 @@ const League: React.FC = () => {
   const upcomingMatches = getUpcomingMatches();
   const featuredMatch = getFeaturedMatch();
 
-  console.log('Current component state:', { teams, loading, error });
-
   return (
     <>
       <SEO
-        title="Fantasy Liga Tabela - Trojka iz ćoška"
-        description="Pratite trenutnu tabelu fantasy košarkaške lige Trojka iz ćoška. Rezultati, raspored utakmica i statistike timova u realnom vremenu."
-        keywords="fantasy liga tabela, košarka rezultati, trojka iz ćoška liga, fantasy basketball standings, yahoo fantasy košarka"
+        title="Fantasy League Standings - Corner Three"
+        description="Follow the current Corner Three fantasy basketball league standings. Real-time results, schedules, and team statistics."
+        keywords="fantasy league standings, basketball results, corner three league, fantasy basketball standings, yahoo fantasy basketball"
         url="/league"
       />
 
-      <div className="pt-24 pb-16">
-      <div className="container">
-        <AnimatedSection className="mb-10 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-blue-600 mb-4">Trojka iz ćoška</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Pratite rezultate i raspored najuzbudljivije košarkaške lige u regionu
-          </p>
-        </AnimatedSection>
-
-        {featuredMatch && <FeaturedMatch match={featuredMatch} />}
-
-        <div className="my-12">
-          <AnimatedSection className="mb-8">
-            <div className="flex items-center justify-between flex-wrap gap-4">
-              <div>
-                <h2 className="text-3xl font-bold text-gray-800 mb-2">Tabela lige</h2>
-                <p className="text-gray-600">
-                  Trenutno stanje na tabeli - podaci se ažuriraju automatski
-                </p>
-                {error && (
-                  <p className="text-orange-600 text-sm mt-1">
-                    Napomena: {error}
-                  </p>
-                )}
-              </div>
-              <button
-                onClick={loadTeamsData}
-                disabled={loading}
-                className="btn-primary text-sm px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? 'Ažuriranje...' : 'Ažuriraj podatke'}
-              </button>
-            </div>
+      <div className="pt-28 pb-16">
+        <div className="container">
+          <AnimatedSection className="mb-10 text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Fantasy League</h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Follow the results and standings of the most exciting fantasy basketball league
+            </p>
           </AnimatedSection>
 
-          <StandingsTable 
-            teams={teams} 
-            loading={loading} 
-            error={error} 
-          />
-        </div>
+          {featuredMatch && <FeaturedMatch match={featuredMatch} />}
 
-        <UpcomingMatches matches={upcomingMatches} />
-      </div>
+          <div className="my-12">
+            <AnimatedSection className="mb-8">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                  <h2 className="text-3xl font-bold text-gray-800 mb-2">League Standings</h2>
+                  <p className="text-gray-600">
+                    Current standings - data updates automatically
+                  </p>
+                  {error && (
+                    <p className="text-orange-600 text-sm mt-1">
+                      Note: {error}
+                    </p>
+                  )}
+                </div>
+                <button
+                  onClick={loadTeamsData}
+                  disabled={loading}
+                  className="btn-primary text-sm px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? 'Updating...' : 'Update Data'}
+                </button>
+              </div>
+            </AnimatedSection>
+
+            <StandingsTable 
+              teams={teams} 
+              loading={loading} 
+              error={error} 
+            />
+          </div>
+
+          <UpcomingMatches matches={upcomingMatches} />
+        </div>
       </div>
     </>
   );
