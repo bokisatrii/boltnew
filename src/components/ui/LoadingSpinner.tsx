@@ -16,7 +16,7 @@ const LoadingSpinner: React.FC = () => {
           transition={{ delay: 0.2 }}
           className="text-gray-600 font-medium"
         >
-          Učitava se...
+          Loading...
         </motion.p>
       </div>
     </div>
