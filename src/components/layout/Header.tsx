@@ -1,19 +1,47 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Home, Newspaper, Mic, Trophy, BarChart3 } from 'lucide-react';
+import { Menu, X, ChevronDown, Youtube, Headphones } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+interface NavItem {
+  name: string;
+  path: string;
+  dropdown?: { name: string; path: string }[];
+}
+
+const navItems: NavItem[] = [
+  { name: 'NBA', path: '/nba' },
+  { 
+    name: 'NCAA', 
+    path: '/ncaa',
+    dropdown: [
+      { name: 'Prospect Watch', path: '/ncaa/prospect-watch' },
+      { name: 'What is NIL?', path: '/ncaa/what-is-nil' },
+    ]
+  },
+  { name: 'Europe', path: '/europe' },
+  { 
+    name: 'Fantasy', 
+    path: '/fantasy',
+    dropdown: [
+      { name: 'Updates', path: '/fantasy/updates' },
+      { name: 'Division 1', path: '/fantasy/division-1' },
+      { name: 'Division 2', path: '/fantasy/division-2' },
+      { name: 'WTF is Fantasy?', path: '/fantasy/wtf-is-fantasy' },
+    ]
+  },
+  { name: 'TV', path: '/tv' },
+  { name: 'CornerThree', path: '/cornerthree' },
+];
 
 const Header: React.FC = () => {
   const location = useLocation();
-  const [isScrolled, setIsScrolled] = useState(false);       // prati scroll
-  const [isMenuOpen, setIsMenuOpen] = useState(false);       // mobilni meni
-  const [isFantasyOpen, setIsFantasyOpen] = useState(false); // desktop dropdown
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [mobileExpandedItems, setMobileExpandedItems] = useState<string[]>([]);
 
-  // HERO logika (čista kao u C)
-  const heroRoutes = ['/', '/podcast'];
-  const onHeroTop = heroRoutes.includes(location.pathname) && !isScrolled;
-
-  // Scroll handler (glatko, bez reflow “bucanja”)
+  // Scroll handler
   useEffect(() => {
     let ticking = false;
     const handleScroll = () => {
@@ -28,20 +56,21 @@ const Header: React.FC = () => {
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [location.pathname]);
+  }, []);
 
-  // Zatvaranje menija pri promeni rute
+  // Close menus on route change
   useEffect(() => {
     setIsMenuOpen(false);
-    setIsFantasyOpen(false);
+    setOpenDropdown(null);
+    setMobileExpandedItems([]);
   }, [location.pathname]);
 
-  // Body lock + ESC za mobilni meni i dropdown
+  // Body lock and ESC handler
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (isMenuOpen) setIsMenuOpen(false);
-        if (isFantasyOpen) setIsFantasyOpen(false);
+        setIsMenuOpen(false);
+        setOpenDropdown(null);
       }
     };
     if (isMenuOpen) {
@@ -54,251 +83,261 @@ const Header: React.FC = () => {
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = 'unset';
     };
-  }, [isMenuOpen, isFantasyOpen]);
+  }, [isMenuOpen]);
 
   const toggleMenu = useCallback(() => setIsMenuOpen((s) => !s), []);
 
-  // Aktivni link — exact za '/', prefix za ostale
   const isActive = (path: string) => {
     if (path === '/') return location.pathname === '/';
     return location.pathname === path || location.pathname.startsWith(path + '/');
   };
 
-  // Header stil: providniji kad je SKROL (što si tražio),
-  // “glass” na vrhu svetlih stranica, potpuno transparentan na hero vrhu
-  const headerClass =
-    onHeroTop
-      ? 'bg-transparent py-5'
-      : isScrolled
-      ? 'bg-white/80 backdrop-blur-md shadow-md py-3'
-      : 'bg-white/95 backdrop-blur-sm shadow-sm py-4';
+  const toggleMobileDropdown = (name: string) => {
+    setMobileExpandedItems((prev) =>
+      prev.includes(name) ? prev.filter((item) => item !== name) : [...prev, name]
+    );
+  };
 
-  // Tekst i hover boje
-  const textClass = onHeroTop ? 'text-white' : 'text-gray-800';
-  const hoverClass = onHeroTop ? 'hover:bg-white/20' : 'hover:bg-gray-100';
-  const logoTextClass = onHeroTop ? 'text-white' : 'text-blue-600';
+  const headerClass = isScrolled
+    ? 'bg-white shadow-md py-2'
+    : 'bg-white py-3';
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${headerClass}`}>
-      <div className="container flex justify-between items-center">
-        {/* Logo */}
-        <Link to="/" className="flex items-center space-x-2 group" aria-label="Trojka iz ćoška početna">
-          <img
-            src="https://i.postimg.cc/cC10vrmV/2701142-ball-basketball-dribbble-game-logo-icon.png"
-            alt="Trojka iz ćoška Logo"
-            className="w-8 h-8 transition-transform duration-300 group-hover:scale-110"
-            loading="eager"
-            width={32}
-            height={32}
-          />
-          <span className={`text-xl md:text-2xl font-bold transition-colors duration-300 ${logoTextClass}`}>
-            Trojka iz ćoška
-          </span>
-        </Link>
+      <div className="container">
+        {/* Top Bar */}
+        <div className="flex justify-between items-center">
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-2 group" aria-label="Corner Three Home">
+            <img
+              src="https://i.postimg.cc/cC10vrmV/2701142-ball-basketball-dribbble-game-logo-icon.png"
+              alt="Corner Three Logo"
+              className="w-8 h-8 transition-transform duration-300 group-hover:scale-110"
+              loading="eager"
+              width={32}
+              height={32}
+            />
+            <span className="text-xl md:text-2xl font-bold text-gray-900 flex items-center">
+              <span className="text-orange-500">●</span>
+              <span className="ml-1">Corner Three</span>
+            </span>
+          </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden md:flex gap-2 items-center text-sm font-medium">
-          {[
-            { name: 'Početna', path: '/' },
-            { name: 'Vesti', path: '/news' },
-            { name: 'Podcast', path: '/podcast' },
-          ].map((link) => (
+          {/* Desktop: Right Side Icons */}
+          <div className="hidden md:flex items-center space-x-4">
+            <a
+              href="https://www.youtube.com/@trojkaizcoska"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center space-x-1 text-gray-700 hover:text-red-600 transition-colors"
+              aria-label="YouTube Channel"
+            >
+              <Youtube size={20} />
+              <span className="text-sm font-medium">Videos</span>
+            </a>
             <Link
-              key={link.path}
-              to={link.path}
-              className={[
-                'px-4 py-1.5 rounded-full transition-colors duration-200',
-                isActive(link.path)
-                  ? 'bg-blue-100 text-blue-700 font-semibold'
-                  : `${textClass} ${hoverClass}`,
-              ].join(' ')}
+              to="/podcast"
+              className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors"
+              aria-label="Podcast"
             >
-              {link.name}
+              <Headphones size={20} />
+              <span className="text-sm font-medium">Podcasts</span>
             </Link>
-          ))}
-
-          {/* Fantasy dropdown (desktop) */}
-          <div
-            className="relative"
-            onMouseEnter={() => setIsFantasyOpen(true)}
-            onMouseLeave={() => setIsFantasyOpen(false)}
-          >
-            <button
-              className={[
-                'px-4 py-1.5 rounded-full transition-colors duration-200',
-                isFantasyOpen ? 'bg-blue-100 text-blue-700 font-semibold' : `${textClass} ${hoverClass}`,
-              ].join(' ')}
-            >
-              Fantasy
-            </button>
-
-            <AnimatePresence>
-              {isFantasyOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                  transition={{ duration: 0.15, ease: 'easeOut' }}
-                  className="absolute left-0 mt-1 bg-white/95 backdrop-blur-md shadow-xl rounded-2xl overflow-hidden min-w-[140px] z-20"
-                >
-                  <Link
-                    to="/news?category=fantasy"
-                    className="block px-4 py-3 text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-150 text-sm font-medium"
-                  >
-                    Vesti
-                  </Link>
-                  <Link
-                    to="/league"
-                    className="block px-4 py-3 text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-150 text-sm font-medium border-t border-gray-200"
-                  >
-                    Tabela
-                  </Link>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
+
+          {/* Mobile toggle */}
+          <button
+            onClick={toggleMenu}
+            className="md:hidden text-2xl p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isMenuOpen}
+          >
+            <motion.div animate={{ rotate: isMenuOpen ? 180 : 0 }} transition={{ duration: 0.3 }}>
+              {isMenuOpen ? <X className="text-gray-800" /> : <Menu className="text-gray-800" />}
+            </motion.div>
+          </button>
+        </div>
+
+        {/* Desktop Navigation Pills */}
+        <nav className="hidden md:flex justify-center gap-1 mt-3 py-2 border-t border-gray-100">
+          <Link
+            to="/"
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              location.pathname === '/'
+                ? 'bg-gray-900 text-white'
+                : 'text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            The Latest
+          </Link>
+          
+          {navItems.map((item) => (
+            <div
+              key={item.name}
+              className="relative"
+              onMouseEnter={() => item.dropdown && setOpenDropdown(item.name)}
+              onMouseLeave={() => setOpenDropdown(null)}
+            >
+              {item.dropdown ? (
+                <>
+                  <button
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-1 ${
+                      isActive(item.path)
+                        ? 'bg-gray-900 text-white'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    {item.name}
+                    <ChevronDown size={14} className={`transition-transform ${openDropdown === item.name ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  <AnimatePresence>
+                    {openDropdown === item.name && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute left-0 top-full mt-1 bg-white shadow-xl rounded-lg overflow-hidden min-w-[180px] z-50 border border-gray-100"
+                      >
+                        {item.dropdown.map((subItem) => (
+                          <Link
+                            key={subItem.path}
+                            to={subItem.path}
+                            className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors text-sm font-medium border-b border-gray-50 last:border-b-0"
+                          >
+                            {subItem.name}
+                          </Link>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </>
+              ) : (
+                <Link
+                  to={item.path}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    isActive(item.path)
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              )}
+            </div>
+          ))}
         </nav>
-
-        {/* CTA dugme (desktop) */}
-        <Link
-          to="/register"
-          className={[
-            'hidden md:block btn transform hover:scale-105 transition-transform duration-200',
-            onHeroTop ? 'bg-orange-500 hover:bg-orange-600 text-white' : 'btn-primary',
-          ].join(' ')}
-        >
-          Prijavi ekipu
-        </Link>
-
-        {/* Mobile toggle */}
-        <button
-          onClick={toggleMenu}
-          className="md:hidden text-2xl p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
-          aria-label={isMenuOpen ? 'Zatvorite meni' : 'Otvorite meni'}
-          aria-expanded={isMenuOpen}
-          aria-controls="mobile-menu"
-        >
-          <motion.div animate={{ rotate: isMenuOpen ? 180 : 0 }} transition={{ duration: 0.3 }}>
-            {isMenuOpen ? (
-              <X className={onHeroTop ? 'text-white' : 'text-gray-800'} />
-            ) : (
-              <Menu className={onHeroTop ? 'text-white' : 'text-gray-800'} />
-            )}
-          </motion.div>
-        </button>
       </div>
 
-      {/* Mobile nav */}
+      {/* Mobile Navigation */}
       <AnimatePresence>
         {isMenuOpen && (
           <>
-            {/* Overlay */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+              className="fixed inset-0 bg-black/50 z-40 md:hidden"
               onClick={() => setIsMenuOpen(false)}
             />
 
-            {/* Sheet */}
             <motion.nav
-              id="mobile-menu"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className="md:hidden bg-white shadow-lg overflow-hidden relative z-50"
-              role="navigation"
-              aria-label="Mobilna navigacija"
+              transition={{ duration: 0.3 }}
+              className="md:hidden bg-white shadow-lg overflow-hidden relative z-50 max-h-[80vh] overflow-y-auto"
             >
-              <div className="container py-6">
-                {/* Glavna navigacija */}
-                <div className="space-y-2 mb-6">
-                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-3">
-                    Navigacija
-                  </h3>
-
+              <div className="container py-4">
+                {/* Mobile Nav Items */}
+                <div className="space-y-1">
                   <Link
                     to="/"
-                    className={[
-                      'flex items-center space-x-3 px-4 py-3 text-lg rounded-xl transition-all duration-200',
-                      isActive('/')
-                        ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 font-semibold transform scale-105'
-                        : 'text-gray-800 hover:bg-gray-50 hover:text-blue-600 hover:transform hover:scale-102',
-                    ].join(' ')}
+                    className={`block px-4 py-3 rounded-lg font-medium transition-colors ${
+                      location.pathname === '/'
+                        ? 'bg-gray-100 text-blue-600'
+                        : 'text-gray-800 hover:bg-gray-50'
+                    }`}
                   >
-                    <Home size={20} />
-                    <span>Početna</span>
+                    The Latest
                   </Link>
 
-                  <Link
-                    to="/news"
-                    className={[
-                      'flex items-center space-x-3 px-4 py-3 text-lg rounded-xl transition-all duration-200',
-                      isActive('/news')
-                        ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 font-semibold transform scale-105'
-                        : 'text-gray-800 hover:bg-gray-50 hover:text-blue-600 hover:transform hover:scale-102',
-                    ].join(' ')}
-                  >
-                    <Newspaper size={20} />
-                    <span>Vesti</span>
-                  </Link>
+                  {navItems.map((item) => (
+                    <div key={item.name}>
+                      {item.dropdown ? (
+                        <>
+                          <button
+                            onClick={() => toggleMobileDropdown(item.name)}
+                            className={`w-full flex items-center justify-between px-4 py-3 rounded-lg font-medium transition-colors ${
+                              isActive(item.path)
+                                ? 'bg-gray-100 text-blue-600'
+                                : 'text-gray-800 hover:bg-gray-50'
+                            }`}
+                          >
+                            {item.name}
+                            <ChevronDown
+                              size={18}
+                              className={`transition-transform ${
+                                mobileExpandedItems.includes(item.name) ? 'rotate-180' : ''
+                              }`}
+                            />
+                          </button>
+                          
+                          <AnimatePresence>
+                            {mobileExpandedItems.includes(item.name) && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                className="ml-4 overflow-hidden"
+                              >
+                                {item.dropdown.map((subItem) => (
+                                  <Link
+                                    key={subItem.path}
+                                    to={subItem.path}
+                                    className="block px-4 py-2.5 text-gray-600 hover:text-blue-600 transition-colors text-sm"
+                                  >
+                                    {subItem.name}
+                                  </Link>
+                                ))}
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </>
+                      ) : (
+                        <Link
+                          to={item.path}
+                          className={`block px-4 py-3 rounded-lg font-medium transition-colors ${
+                            isActive(item.path)
+                              ? 'bg-gray-100 text-blue-600'
+                              : 'text-gray-800 hover:bg-gray-50'
+                          }`}
+                        >
+                          {item.name}
+                        </Link>
+                      )}
+                    </div>
+                  ))}
+                </div>
 
+                {/* Mobile: Quick Links */}
+                <div className="mt-4 pt-4 border-t border-gray-100 space-y-2">
+                  <a
+                    href="https://www.youtube.com/@trojkaizcoska"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg"
+                  >
+                    <Youtube size={20} className="text-red-600" />
+                    <span className="font-medium">Videos</span>
+                  </a>
                   <Link
                     to="/podcast"
-                    className={[
-                      'flex items-center space-x-3 px-4 py-3 text-lg rounded-xl transition-all duration-200',
-                      isActive('/podcast')
-                        ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 font-semibold transform scale-105'
-                        : 'text-gray-800 hover:bg-gray-50 hover:text-blue-600 hover:transform hover:scale-102',
-                    ].join(' ')}
+                    className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg"
                   >
-                    <Mic size={20} />
-                    <span>Podcast</span>
-                  </Link>
-                </div>
-
-                {/* Fantasy sekcija */}
-                <div className="space-y-2 mb-6">
-                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-3">
-                    Fantasy
-                  </h3>
-
-                  <Link
-                    to="/news?category=fantasy"
-                    className={[
-                      'flex items-center space-x-3 px-4 py-3 text-lg rounded-xl transition-all duration-200',
-                      location.pathname.startsWith('/news') && window.location.search.includes('category=fantasy')
-                        ? 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 font-semibold transform scale-105'
-                        : 'text-gray-800 hover:bg-purple-50 hover:text-purple-600 hover:transform hover:scale-102',
-                    ].join(' ')}
-                  >
-                    <Trophy size={20} />
-                    <span>Fantasy Vesti</span>
-                  </Link>
-
-                  <Link
-                    to="/league"
-                    className={[
-                      'flex items-center space-x-3 px-4 py-3 text-lg rounded-xl transition-all duration-200',
-                      isActive('/league')
-                        ? 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 font-semibold transform scale-105'
-                        : 'text-gray-800 hover:bg-purple-50 hover:text-purple-600 hover:transform hover:scale-102',
-                    ].join(' ')}
-                  >
-                    <BarChart3 size={20} />
-                    <span>Tabela</span>
-                  </Link>
-                </div>
-
-                {/* CTA */}
-                <div className="px-4">
-                  <Link
-                    to="/register"
-                    className="btn btn-primary text-center w-full py-4 text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-                  >
-                    Prijavi ekipu
+                    <Headphones size={20} className="text-blue-600" />
+                    <span className="font-medium">Podcasts</span>
                   </Link>
                 </div>
               </div>
