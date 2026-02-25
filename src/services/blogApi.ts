@@ -1,13 +1,13 @@
-// src/services/blogApi.ts - POBOLJŠANA VERZIJA
+// src/services/blogApi.ts - Enhanced Version
 const ORIGINAL_API_URL = 'https://script.google.com/macros/s/AKfycbxjHgFozJT6Uo8gK4jd-YL2wFLohKsu2pwzCsJ0N0KVCGrb6FR5mgwgYK5eD8HHpeNaDA/exec';
 
-// Nekoliko CORS proxy opcija - probaj različite ako jedan ne radi
+// Multiple CORS proxy options - try different ones if one fails
 const CORS_PROXIES = [
   'https://api.allorigins.win/raw?url=',
   'https://corsproxy.io/?',
   'https://cors-anywhere.herokuapp.com/',
   'https://api.codetabs.com/v1/proxy?quest=',
-  // Dodaj direktan pristup kao fallback
+  // Direct access as fallback
   ''
 ];
 
@@ -34,8 +34,8 @@ const processRawPosts = (rawPosts: RawBlogPost[]): BlogPost[] => {
 export class BlogAPI {
   private cache: BlogPost[] | null = null;
   private cacheTimestamp: number = 0;
-  private cacheTimeout = 5 * 60 * 1000; // 5 minuta cache
-  private currentProxyIndex = 0; // Trenutni proxy indeks
+  private cacheTimeout = 5 * 60 * 1000; // 5 minutes cache
+  private currentProxyIndex = 0;
   
   private async fetchWithTimeout(url: string, timeout: number = 10000): Promise<Response> {
     const controller = new AbortController();
@@ -62,7 +62,7 @@ export class BlogAPI {
     const proxy = CORS_PROXIES[proxyIndex];
     const apiUrl = proxy ? proxy + encodeURIComponent(ORIGINAL_API_URL) : ORIGINAL_API_URL;
     
-    console.log(`🔄 Pokušavam fetch sa proxy ${proxyIndex}: ${proxy || 'direktan pristup'}`);
+    console.log(`🔄 Attempting fetch with proxy ${proxyIndex}: ${proxy || 'direct access'}`);
     
     const response = await this.fetchWithTimeout(apiUrl);
     
@@ -74,101 +74,101 @@ export class BlogAPI {
     console.log('✅ API Response:', result);
     
     if (!result.success) {
-      throw new Error(result.error || 'API greška');
+      throw new Error(result.error || 'API error');
     }
     
     return processRawPosts(result.data || []);
   }
   
   async fetchBlogPosts(): Promise<BlogPost[]> {
-    // Proverava cache
+    // Check cache
     const now = Date.now();
     if (this.cache && (now - this.cacheTimestamp) < this.cacheTimeout) {
       console.log('📦 Using cached blog posts');
       return this.cache;
     }
 
-    // Pokušava sa svim proxy-jima redom
+    // Try all proxies in order
     for (let i = 0; i < CORS_PROXIES.length; i++) {
       const proxyIndex = (this.currentProxyIndex + i) % CORS_PROXIES.length;
       
       try {
         const posts = await this.tryFetchWithProxy(proxyIndex);
         
-        // Uspešno dohvatanje - ažurira cache i pamti koji proxy radi
+        // Successfully fetched - update cache and remember which proxy works
         this.cache = posts;
         this.cacheTimestamp = now;
         this.currentProxyIndex = proxyIndex;
         
-        console.log(`✅ Uspešno dohvaćeno ${posts.length} postova sa proxy ${proxyIndex}`);
+        console.log(`✅ Successfully fetched ${posts.length} posts with proxy ${proxyIndex}`);
         return posts;
         
       } catch (error) {
-        console.warn(`❌ Proxy ${proxyIndex} neuspešan:`, error);
+        console.warn(`❌ Proxy ${proxyIndex} failed:`, error);
         
-        // Ako je poslednji proxy, nastavi sa error handling-om
+        // If last proxy, continue to error handling
         if (i === CORS_PROXIES.length - 1) {
-          console.error('❌ Svi proxy-ji neuspešni');
+          console.error('❌ All proxies failed');
           break;
         }
       }
     }
     
-    // Ako sve proxy-je ne rade, pokušaj sa starim cache-om
+    // If all proxies fail, try using old cache
     if (this.cache) {
-      console.log('📦 Koristim stari cache zbog grešaka sa API-jem');
+      console.log('📦 Using old cache due to API errors');
       return this.cache;
     }
     
-    // Poslednji fallback - mock podaci
-    console.log('📝 Koristim mock podatke');
+    // Last fallback - mock data
+    console.log('📝 Using mock data');
     const mockData = this.getMockData();
     this.cache = mockData;
     this.cacheTimestamp = now;
     return mockData;
   }
   
-  // Mock podaci za testiranje i fallback
+  // Mock data for testing and fallback
   private getMockData(): BlogPost[] {
     const rawMockData: RawBlogPost[] = [
       {
         id: "1",
-        naslov: "Trojka iz ćoška počinje spektakularno!",
+        naslov: "Corner Three Returns in Style!",
         datum: "2025-06-17T10:00:00.000Z",
-        tekst: "Nakon dugotrajne pripreke, Trojka iz ćoška se vraća u velikom stilu! Očekuje nas nezaboravna sezona puna uzbuđenja, novih igrača i neverovatnih utakmica. Prijavite svoje timove i budite deo najveće fantasy košarkaške lige u regionu.",
+        tekst: "After extensive preparation, Corner Three is back in a big way! Expect an unforgettable season full of excitement, new players, and incredible matchups. Register your teams and be part of the biggest fantasy basketball league in the region.",
         slika: "https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        slug: "trojka-iz-coska-pocinje-spektakularno",
-        autor: "Bogdan Terzic",
+        slug: "corner-three-returns-in-style",
+        autor: "Corner Three Team",
         category: "fantasy,featured"
       },
       {
         id: "2",
-        naslov: "Noćna utakmica pod reflektorima",
+        naslov: "Night Game Under the Lights",
         datum: "2025-06-15T20:00:00.000Z",
-        tekst: "Spektakl pod reflektorima! Trojka iz ćoška organizuje posebnu noćnu utakmicu na otvorenom u centru grada. Ovo će biti jedinstveno iskustvo za sve ljubitelje košarke - atmosfera, muzika i najbolji igrači na jednom mestu.",
+        tekst: "Spectacular night game under the lights! Corner Three is organizing a special outdoor game in the city center. This will be a unique experience for all basketball lovers - atmosphere, music, and the best players in one place.",
         slika: "https://images.unsplash.com/photo-1504450758481-7338eba7524a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        slug: "nocna-utakmica-pod-reflektorima",
-        autor: "Trojka iz ćoška Tim",
+        slug: "night-game-under-the-lights",
+        autor: "Corner Three Team",
         category: "events,nba"
       },
       {
         id: "3",
-        naslov: "MVP igrač sezone - ko će pobediti?",
+        naslov: "MVP of the Season - Who Will Win?",
         datum: "2025-06-12T14:30:00.000Z",
-        tekst: "Analiza najboljih kandidata za MVP nagradu ove sezone. Koji igrači dominiraju statistikama i ko ima najveće šanse da ponese prestižnu nagradu? Detaljno razmotrićemo top 5 kandidata.",
+        tekst: "Analysis of the best MVP candidates this season. Which players dominate the statistics and who has the best chances to win the prestigious award? We'll take a detailed look at the top 5 candidates.",
         slika: "https://images.unsplash.com/photo-1577223625816-7546f13df25d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        slug: "mvp-igrac-sezone",
-        autor: "Marko Petrovic",
+        slug: "mvp-of-the-season",
+        autor: "Corner Three Team",
         category: "analysis,nba,featured"
       },
       {
         id: "4",
-        naslov: "Fantasy saveti za početnike",
+        naslov: "Fantasy Tips for Beginners",
         datum: "2025-06-10T09:00:00.000Z",
-        tekst: "Novi u fantasy košarci? Evo osnovnih saveta koji će vam pomoći da započnete svoju fantasy avanturu na pravi način. Od izbora igrača do strategije drafta - sve što treba da znate!",
+        tekst: "New to fantasy basketball? Here are the basic tips that will help you start your fantasy adventure the right way. From player selection to draft strategy - everything you need to know!",
         slika: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        slug: "fantasy-saveti-za-pocetnike",
-        autor: "Ana Jovanovic",
+        slug: "fantasy-tips-for-beginners",
+        autor: "Corner Three Team",
         category: "tips,fantasy"
       }
     ];
@@ -213,19 +213,19 @@ export class BlogAPI {
     }
   }
 
-  // Metoda za brisanje cache-a
+  // Method to clear cache
   clearCache(): void {
     this.cache = null;
     this.cacheTimestamp = 0;
-    console.log('🗑️ Cache obrishan');
+    console.log('🗑️ Cache cleared');
   }
   
-  // Metoda za debug informacije
+  // Method for debug information
   getDebugInfo(): object {
     return {
       cacheSize: this.cache?.length || 0,
       cacheAge: Date.now() - this.cacheTimestamp,
-      currentProxy: CORS_PROXIES[this.currentProxyIndex] || 'direktan pristup',
+      currentProxy: CORS_PROXIES[this.currentProxyIndex] || 'direct access',
       proxyIndex: this.currentProxyIndex
     };
   }
