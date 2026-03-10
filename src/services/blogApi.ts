@@ -1,5 +1,5 @@
 // src/services/blogApi.ts - Enhanced Version
-const ORIGINAL_API_URL = 'https://script.google.com/macros/s/AKfycbxjHgFozJT6Uo8gK4jd-YL2wFLohKsu2pwzCsJ0N0KVCGrb6FR5mgwgYK5eD8HHpeNaDA/exec';
+const ORIGINAL_API_URL = 'https://script.google.com/macros/s/AKfycbwF3no5_3qdGcyaVzC_5jVcGNHESD8yLGLyKRvpYbt4XtJgV95ODDwGlqNb3abZPpjj/exec';
 
 // Multiple CORS proxy options - try different ones if one fails
 const CORS_PROXIES = [
