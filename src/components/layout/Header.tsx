@@ -118,7 +118,6 @@ const Header: React.FC = () => {
               height={32}
             />
             <span className="text-xl md:text-2xl font-bold text-gray-900 flex items-center">
-              <span className="text-orange-500">●</span>
               <span className="ml-1">Corner Three</span>
             </span>
           </Link>
