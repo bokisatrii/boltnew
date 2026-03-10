@@ -24,7 +24,7 @@ export class BlogAPI {
   private cacheTimestamp: number = 0;
   private cacheTimeout = 5 * 60 * 1000;
 
-  private async fetchWithTimeout(url: string, timeout: number = 15000): Promise<Response> {
+  private async fetchWithTimeout(url: string, timeout: number = 30000): Promise<Response> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
     try {
@@ -44,32 +44,40 @@ export class BlogAPI {
       return this.cache;
     }
 
-    // allorigins /get endpoint - ne radi preflight, radi na svim hostovima
-    const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(ORIGINAL_API_URL);
+    const proxies = [
+      { url: 'https://api.allorigins.win/get?url=' + encodeURIComponent(ORIGINAL_API_URL), type: 'allorigins' },
+      { url: 'https://corsproxy.io/?' + encodeURIComponent(ORIGINAL_API_URL), type: 'direct' },
+    ];
 
-    try {
-      console.log('🌐 Fetching blog posts...');
-      const response = await this.fetchWithTimeout(proxyUrl);
+    for (const proxy of proxies) {
+      try {
+        console.log('🌐 Fetching blog posts via', proxy.type);
+        const response = await this.fetchWithTimeout(proxy.url);
+        if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
 
-      if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+        let result: APIResponse;
+        if (proxy.type === 'allorigins') {
+          const wrapper = await response.json();
+          result = JSON.parse(wrapper.contents);
+        } else {
+          result = await response.json();
+        }
 
-      const wrapper = await response.json();
-      const result: APIResponse = JSON.parse(wrapper.contents);
+        if (!result.success) throw new Error(result.error || 'API error');
 
-      if (!result.success) throw new Error(result.error || 'API error');
+        const posts = processRawPosts(result.data || []);
+        this.cache = posts;
+        this.cacheTimestamp = now;
+        console.log(`✅ Fetched ${posts.length} posts`);
+        return posts;
 
-      const posts = processRawPosts(result.data || []);
-      this.cache = posts;
-      this.cacheTimestamp = now;
-
-      console.log(`✅ Fetched ${posts.length} posts`);
-      return posts;
-
-    } catch (error) {
-      console.error('❌ Blog fetch failed:', error);
-      if (this.cache) return this.cache;
-      return this.getMockData();
+      } catch (error) {
+        console.warn(`❌ ${proxy.type} failed:`, error);
+      }
     }
+
+    if (this.cache) return this.cache;
+    return this.getMockData();
   }
 
   async getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
