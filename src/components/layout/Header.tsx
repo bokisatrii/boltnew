@@ -158,8 +158,8 @@ const Header: React.FC = () => {
           </button>
         </div>
 
-        {/* Desktop Navigation Pills */}
-        <nav className="hidden md:flex justify-center gap-1 mt-3 py-2 border-t border-gray-100">
+        {/* Desktop Navigation Pills — FIXED: added items-center */}
+        <nav className="hidden md:flex justify-center items-center gap-1 mt-3 py-2 border-t border-gray-100">
           <Link
             to="/"
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
