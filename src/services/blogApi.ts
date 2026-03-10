@@ -1,6 +1,6 @@
 import { BlogPost, RawBlogPost } from '../types/blog';
 
-const API_URL = '/.netlify/functions/blog';
+const ORIGINAL_API_URL = 'https://script.google.com/macros/s/AKfycbwF3no5_3qdGcyaVzC_5jVcGNHESD8yLGLyKRvpYbt4XtJgV95ODDwGlqNb3abZPpjj/exec';
 
 interface APIResponse {
   success: boolean;
@@ -24,10 +24,9 @@ export class BlogAPI {
   private cacheTimestamp: number = 0;
   private cacheTimeout = 5 * 60 * 1000;
 
-  private async fetchWithTimeout(url: string, timeout: number = 10000): Promise<Response> {
+  private async fetchWithTimeout(url: string, timeout: number = 15000): Promise<Response> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
-
     try {
       const response = await fetch(url, { signal: controller.signal });
       clearTimeout(timeoutId);
@@ -45,13 +44,17 @@ export class BlogAPI {
       return this.cache;
     }
 
+    // allorigins /get endpoint - ne radi preflight, radi na svim hostovima
+    const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(ORIGINAL_API_URL);
+
     try {
       console.log('🌐 Fetching blog posts...');
-      const response = await this.fetchWithTimeout(API_URL);
+      const response = await this.fetchWithTimeout(proxyUrl);
 
       if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
 
-      const result: APIResponse = await response.json();
+      const wrapper = await response.json();
+      const result: APIResponse = JSON.parse(wrapper.contents);
 
       if (!result.success) throw new Error(result.error || 'API error');
 
