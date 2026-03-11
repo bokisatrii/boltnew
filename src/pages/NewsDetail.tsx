@@ -146,10 +146,6 @@ const NewsDetail: React.FC = () => {
                 <Calendar size={18} />
                 <span>{formatDate(article.datum)}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Clock size={18} />
-                <span>5 min read</span>
-              </div>
             </div>
           </motion.header>
 
