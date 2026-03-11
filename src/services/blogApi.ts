@@ -1,6 +1,18 @@
 import { BlogPost, RawBlogPost } from '../types/blog';
 
-const ORIGINAL_API_URL = 'https://script.google.com/macros/s/AKfycbwF3no5_3qdGcyaVzC_5jVcGNHESD8yLGLyKRvpYbt4XtJgV95ODDwGlqNb3abZPpjj/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwF3no5_3qdGcyaVzC_5jVcGNHESD8yLGLyKRvpYbt4XtJgV95ODDwGlqNb3abZPpjj/exec';
+
+const getApiUrl = (): string => {
+  if (typeof window === 'undefined') return '/api/blog';
+  const host = window.location.hostname;
+  if (host === 'localhost' || host === '127.0.0.1') {
+    return APPS_SCRIPT_URL; // lokalno — direktno
+  }
+  if (host.includes('netlify.app') || host.includes('netlify.com')) {
+    return '/.netlify/functions/blog'; // Netlify
+  }
+  return '/api/blog'; // Vercel (i svaki custom domain na Vercelu)
+};
 
 interface APIResponse {
   success: boolean;
@@ -24,19 +36,6 @@ export class BlogAPI {
   private cacheTimestamp: number = 0;
   private cacheTimeout = 5 * 60 * 1000;
 
-  private async fetchWithTimeout(url: string, timeout: number = 30000): Promise<Response> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
-    try {
-      const response = await fetch(url, { signal: controller.signal });
-      clearTimeout(timeoutId);
-      return response;
-    } catch (error) {
-      clearTimeout(timeoutId);
-      throw error;
-    }
-  }
-
   async fetchBlogPosts(): Promise<BlogPost[]> {
     const now = Date.now();
     if (this.cache && (now - this.cacheTimestamp) < this.cacheTimeout) {
@@ -44,40 +43,32 @@ export class BlogAPI {
       return this.cache;
     }
 
-    const proxies = [
-      { url: 'https://api.allorigins.win/get?url=' + encodeURIComponent(ORIGINAL_API_URL), type: 'allorigins' },
-      { url: 'https://corsproxy.io/?' + encodeURIComponent(ORIGINAL_API_URL), type: 'direct' },
-    ];
+    const apiUrl = getApiUrl();
+    console.log('🌐 Fetching from:', apiUrl);
 
-    for (const proxy of proxies) {
-      try {
-        console.log('🌐 Fetching blog posts via', proxy.type);
-        const response = await this.fetchWithTimeout(proxy.url);
-        if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
 
-        let result: APIResponse;
-        if (proxy.type === 'allorigins') {
-          const wrapper = await response.json();
-          result = JSON.parse(wrapper.contents);
-        } else {
-          result = await response.json();
-        }
+      const response = await fetch(apiUrl, { signal: controller.signal });
+      clearTimeout(timeoutId);
 
-        if (!result.success) throw new Error(result.error || 'API error');
+      if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
 
-        const posts = processRawPosts(result.data || []);
-        this.cache = posts;
-        this.cacheTimestamp = now;
-        console.log(`✅ Fetched ${posts.length} posts`);
-        return posts;
+      const result: APIResponse = await response.json();
+      if (!result.success) throw new Error(result.error || 'API error');
 
-      } catch (error) {
-        console.warn(`❌ ${proxy.type} failed:`, error);
-      }
+      const posts = processRawPosts(result.data || []);
+      this.cache = posts;
+      this.cacheTimestamp = now;
+      console.log(`✅ Fetched ${posts.length} posts`);
+      return posts;
+
+    } catch (error) {
+      console.error('❌ Fetch failed:', error);
+      if (this.cache) return this.cache;
+      return this.getMockData();
     }
-
-    if (this.cache) return this.cache;
-    return this.getMockData();
   }
 
   async getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
@@ -85,7 +76,7 @@ export class BlogAPI {
       const posts = await this.fetchBlogPosts();
       return posts.find(post => post.slug === slug) || null;
     } catch (error) {
-      console.error('Error fetching blog post by slug:', error);
+      console.error('Error fetching post by slug:', error);
       return null;
     }
   }
@@ -98,7 +89,7 @@ export class BlogAPI {
         post.category.some(cat => cat.includes(searchCategory))
       );
     } catch (error) {
-      console.error('Error fetching blog posts by category:', error);
+      console.error('Error fetching posts by category:', error);
       return [];
     }
   }
@@ -131,16 +122,6 @@ export class BlogAPI {
         slug: "corner-three-returns-in-style",
         autor: "Corner Three Team",
         category: ["fantasy", "featured"]
-      },
-      {
-        id: "2",
-        naslov: "MVP of the Season - Who Will Win?",
-        datum: "2025-06-12T14:30:00.000Z",
-        tekst: "Analysis of the best MVP candidates this season.",
-        slika: "https://images.unsplash.com/photo-1577223625816-7546f13df25d?auto=format&fit=crop&w=800&q=80",
-        slug: "mvp-of-the-season",
-        autor: "Corner Three Team",
-        category: ["nba", "featured"]
       }
     ];
   }
