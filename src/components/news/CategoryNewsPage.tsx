@@ -181,10 +181,6 @@ const CategoryNewsPage: React.FC<CategoryNewsPageProps> = ({
                                 <span className="mx-2">•</span>
                               </>
                             )}
-                            <span className="flex items-center gap-1">
-                              <Clock size={14} />
-                              5 min read
-                            </span>
                           </div>
                         </Link>
                       </motion.article>
