@@ -178,7 +178,6 @@ const CategoryNewsPage: React.FC<CategoryNewsPageProps> = ({
                             {article.autor && (
                               <>
                                 <span className="font-medium">By {article.autor}</span>
-                                <span className="mx-2">•</span>
                               </>
                             )}
                           </div>
