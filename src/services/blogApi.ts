@@ -5,13 +5,10 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwF3no5_3qdGcya
 const getApiUrl = (): string => {
   if (typeof window === 'undefined') return '/api/blog';
   const host = window.location.hostname;
-  if (host === 'localhost' || host === '127.0.0.1') {
-    return APPS_SCRIPT_URL; // lokalno — direktno
+  if (host === 'localhost' || host === '127.0.0.1' || host.includes('netlify')) {
+    return APPS_SCRIPT_URL; // direktno — lokalno i Netlify
   }
-  if (host.includes('netlify.app') || host.includes('netlify.com')) {
-    return '/.netlify/functions/blog'; // Netlify
-  }
-  return '/api/blog'; // Vercel (i svaki custom domain na Vercelu)
+  return '/api/blog'; // Vercel i custom domeni
 };
 
 interface APIResponse {
