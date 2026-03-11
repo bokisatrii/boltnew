@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar, User, Clock, Share2, Twitter, Facebook, Linkedin } from 'lucide-react';
+import { ArrowLeft, Calendar, User, Share2, Twitter, Facebook, Linkedin } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SEO from '../components/SEO';
 import { blogAPI } from '../services/blogApi';
@@ -16,19 +16,13 @@ const NewsDetail: React.FC = () => {
   useEffect(() => {
     async function loadArticle() {
       if (!slug) return;
-      
       try {
         setLoading(true);
         const post = await blogAPI.getBlogPostBySlug(slug);
-        
         if (post) {
           setArticle(post);
-          
-          // Load related articles
           const allPosts = await blogAPI.fetchBlogPosts();
-          const related = allPosts
-            .filter(p => p.slug !== slug)
-            .slice(0, 3);
+          const related = allPosts.filter(p => p.slug !== slug).slice(0, 3);
           setRelatedArticles(related);
         }
       } catch (error) {
@@ -37,7 +31,6 @@ const NewsDetail: React.FC = () => {
         setLoading(false);
       }
     }
-    
     loadArticle();
     window.scrollTo(0, 0);
   }, [slug]);
@@ -60,6 +53,49 @@ const NewsDetail: React.FC = () => {
       cornerthree: 'bg-orange-500',
     };
     return colors[category.toLowerCase()] || 'bg-gray-500';
+  };
+
+  // Parsira tekst i renderuje paragrafe, slike i YouTube videe
+  const renderContent = (tekst: string) => {
+    return tekst.split('\n').map((line, index) => {
+      // <<IMG:url>> — ubaci sliku
+      const imgMatch = line.match(/^<<IMG:(.+)>>$/);
+      if (imgMatch) {
+        return (
+          <img
+            key={index}
+            src={imgMatch[1].trim()}
+            alt="Article image"
+            className="w-full rounded-xl my-6"
+          />
+        );
+      }
+
+      // <<YT:video_id>> — ubaci YouTube embed
+      const ytMatch = line.match(/^<<YT:(.+)>>$/);
+      if (ytMatch) {
+        return (
+          <div key={index} className="relative w-full my-6" style={{ paddingBottom: '56.25%' }}>
+            <iframe
+              className="absolute top-0 left-0 w-full h-full rounded-xl"
+              src={`https://www.youtube.com/embed/${ytMatch[1].trim()}`}
+              title="YouTube video"
+              allowFullScreen
+            />
+          </div>
+        );
+      }
+
+      // Prazan red — preskoči
+      if (!line.trim()) return null;
+
+      // Normalan paragraf
+      return (
+        <p key={index} className="mb-4 text-gray-700 leading-relaxed">
+          {line}
+        </p>
+      );
+    });
   };
 
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
@@ -118,7 +154,6 @@ const NewsDetail: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            {/* Categories */}
             <div className="flex flex-wrap gap-2 mb-4">
               {article.category.map((cat) => (
                 <span
@@ -134,7 +169,6 @@ const NewsDetail: React.FC = () => {
               {article.naslov}
             </h1>
 
-            {/* Meta Info */}
             <div className="flex flex-wrap items-center gap-4 text-gray-600">
               {article.autor && (
                 <div className="flex items-center gap-2">
@@ -172,11 +206,7 @@ const NewsDetail: React.FC = () => {
               className="lg:col-span-3"
             >
               <div className="prose prose-lg max-w-none">
-                {article.tekst?.split('\n').map((paragraph, index) => (
-                  <p key={index} className="mb-4 text-gray-700 leading-relaxed">
-                    {paragraph}
-                  </p>
-                ))}
+                {renderContent(article.tekst || '')}
               </div>
 
               {/* Share Section */}
