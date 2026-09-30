@@ -66,7 +66,7 @@ The dev server runs at <http://localhost:5173>.
 │   ├── data/               # Static data (matches, stats, teams)
 │   ├── hooks/              # useBlog, useSpotifyEpisodes
 │   ├── pages/              # Home, League, News, NewsDetail, Podcast, Register, Contact
-│   ├── services/           # blogApi, googleSheetsApi, sheetbestApi, spotifyApi
+│   ├── services/           # blogApi, googleSheetsApi, spotifyApi
 │   ├── types/              # Shared TypeScript types
 │   ├── App.tsx             # Routes, error boundary, analytics
 │   └── main.tsx
@@ -84,7 +84,18 @@ The site has no dedicated backend. Content comes from lightweight services:
 - **Podcast** – Spotify embed and a SociableKit widget on the Podcast page. `spotifyApi.ts` only provides mock episode data and helpers.
 - **Registration** – the form currently validates and shows a success state on the client only; submissions are not yet sent to a backend.
 
-`src/services/sheetbestApi.ts` is an older SheetBest-based standings client and is not used by the League page anymore.
+## Product & workflow decisions
+
+- **Google Sheets as a no-code CMS.** League standings and blog posts live in Google Sheets and are published through Google Apps Script endpoints, so non-technical editors can update content without touching code or triggering a deploy.
+- **Resilience over perfection.** Every data source has a cache and a fallback (proxy retry, stale cache, then static/mock data), so the site never shows a blank page if an external service is down.
+- **Zero-backend, low-cost stack.** Static SPA on Vercel with no servers or databases to maintain.
+- **Built for discoverability.** Meta tags, Open Graph cards, schema.org data, sitemap and per-page titles support organic search for a Serbian-language audience.
+- **Measured from day one.** Vercel Analytics and Speed Insights are included to track traffic and Core Web Vitals.
+
+## Roadmap ideas
+
+- Send team registrations to a Google Sheet/CRM and trigger a confirmation email (currently client-side only).
+- Automate podcast episode updates from the Spotify RSS feed.
 
 ## Deployment
 

@@ -16,37 +16,11 @@ cd basket-liga-website
 npm install
 ```
 
-### 2. Environment Variables Setup
+### 2. Configuration
 
-Create a `.env` file in the root directory:
+No environment variables are required. Content is loaded from Google Apps Script endpoints (see `src/services/`), and the Spotify player is an embed.
 
-```bash
-# Copy the example and fill in your values
-cp .env.example .env
-```
-
-Required environment variables:
-
-```env
-VITE_SHEETBEST_API_KEY=your_sheetbest_api_key_here
-VITE_SPOTIFY_CLIENT_ID=your_spotify_client_id_here
-VITE_SPOTIFY_CLIENT_SECRET=your_spotify_client_secret_here
-```
-
-### 3. Spotify API Setup
-
-1. **Create Spotify App**:
-   - Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
-   - Click "Create App"
-   - Fill in app details (name, description)
-   - Set redirect URI (not needed for Client Credentials flow)
-   - Note down Client ID and Client Secret
-
-2. **Configure Environment Variables**:
-   - Add `VITE_SPOTIFY_CLIENT_ID` with your Client ID
-   - Add `VITE_SPOTIFY_CLIENT_SECRET` with your Client Secret
-
-### 4. Start Development Server
+### 3. Start Development Server
 
 ```bash
 npm run dev
@@ -69,13 +43,7 @@ The application will be available at `http://localhost:5173`
    - Build command: `npm run build`
    - Publish directory: `dist`
 
-3. **Environment Variables**
-   - Go to Site settings → Environment variables
-   - Add: `VITE_SHEETBEST_API_KEY` with your API key
-   - Add: `VITE_SPOTIFY_CLIENT_ID` with your Spotify Client ID
-   - Add: `VITE_SPOTIFY_CLIENT_SECRET` with your Spotify Client Secret
-
-4. **Deploy**
+3. **Deploy**
    - Netlify will automatically deploy on every push to main branch
 
 #### Manual Deployment
@@ -105,12 +73,7 @@ netlify deploy --prod --dir=dist
    - Build Command: `npm run build`
    - Output Directory: `dist`
 
-3. **Environment Variables**
-   - Add: `VITE_SHEETBEST_API_KEY` with your API key
-   - Add: `VITE_SPOTIFY_CLIENT_ID` with your Spotify Client ID
-   - Add: `VITE_SPOTIFY_CLIENT_SECRET` with your Spotify Client Secret
-
-4. **Deploy**
+3. **Deploy**
    - Vercel will automatically deploy on every push
 
 #### Manual Deployment
@@ -179,28 +142,18 @@ vercel
 
 ### Common Issues
 
-1. **Environment Variables Not Working**
-   - Ensure variables start with `VITE_`
-   - Restart development server after adding variables
-   - Check deployment platform environment settings
-
-2. **Spotify API Issues**
-   - Verify Client ID and Client Secret are correct
-   - Check if Spotify app is properly configured
-   - Ensure API credentials have proper permissions
-
-3. **Routing Issues (404 on refresh)**
+1. **Routing Issues (404 on refresh)**
    - Verify `_redirects` file for Netlify
    - Verify `vercel.json` for Vercel
    - Ensure SPA routing is properly configured
 
-4. **Build Failures**
+2. **Build Failures**
    - Check Node.js version (18+ required)
    - Clear node_modules and reinstall: `rm -rf node_modules package-lock.json && npm install`
    - Check for TypeScript errors: `npm run lint`
 
-5. **API Issues**
-   - Verify API keys are correctly set
+3. **Data Not Loading**
+   - Check that the Google Apps Script web apps are still deployed and public
    - Check network connectivity
    - Review browser console for errors
 
@@ -242,22 +195,16 @@ vercel
 
 ## 🔐 Security Considerations
 
-1. **Environment Variables**
-   - Never commit `.env` files
-   - Use different API keys for development/production
-   - Rotate API keys regularly
+1. **Secrets**
+   - Never commit API keys or `.env` files; this is a frontend app, so anything in the bundle is public
+   - Keep sensitive operations behind a backend or serverless function
 
-2. **Spotify API Security**
-   - Client Credentials are exposed in frontend (acceptable for public data)
-   - Consider backend proxy for sensitive operations
-   - Monitor API usage and rate limits
-
-3. **Content Security Policy**
+2. **Content Security Policy**
    - Configure CSP headers
    - Restrict external resource loading
    - Enable HTTPS only
 
-4. **Dependencies**
+3. **Dependencies**
    - Regularly update dependencies
    - Run security audits: `npm audit`
    - Use dependabot for automated updates
